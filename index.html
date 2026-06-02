@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StatLab · Statistical Methods for AI/ML</title>
+  <meta name="description" content="An interactive course companion for Introduction to Statistical Methods (M.Tech AI/ML)." />
+
+  <!-- KaTeX for beautiful math (loads from CDN when online; app still works offline, math falls back to raw text) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" onerror="window.__katexCSSFailed=true" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFG" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" onerror="window.__fontsFailed=true" />
+
+  <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+<body>
+  <!-- Animated background canvas -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" aria-label="Toggle menu">☰</button>
+    <a class="brand" href="#/home">
+      <span class="brand-mark">σ</span>
+      <span class="brand-text">StatLab<span class="brand-sub">AI/ML</span></span>
+    </a>
+    <div class="topbar-spacer"></div>
+    <button id="cmd-open" class="search-pill" title="Search (press /)">
+      <span>🔍</span><span class="search-pill-text">Jump to topic…</span><kbd>/</kbd>
+    </button>
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle light/dark">🌙</button>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+      <div class="overall-progress">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 72 72" class="ring">
+            <circle class="ring-bg" cx="36" cy="36" r="30"></circle>
+            <circle id="overall-ring" class="ring-fg" cx="36" cy="36" r="30"></circle>
+          </svg>
+          <div class="ring-label"><span id="overall-pct">0%</span></div>
+        </div>
+        <div class="overall-text">
+          <strong>Your progress</strong>
+          <span id="overall-sub">0 / 0 sections</span>
+        </div>
+      </div>
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-foot">
+        <button id="reset-progress" class="link-btn">Reset progress</button>
+      </div>
+    </div>
+  </aside>
+  <div id="scrim" class="scrim"></div>
+
+  <!-- Main content -->
+  <main id="view" class="view" tabindex="-1"></main>
+
+  <!-- Command palette -->
+  <div id="cmd-palette" class="cmd-palette" hidden>
+    <div class="cmd-box">
+      <input id="cmd-input" type="text" placeholder="Search topics, formulas, interview Qs…" autocomplete="off" />
+      <ul id="cmd-results" class="cmd-results"></ul>
+    </div>
+  </div>
+
+  <!-- Scripts: content registers into window.Course -->
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/viz.js"></script>
+  <script src="assets/js/quiz.js"></script>
+  <script src="content/m1.js"></script>
+  <script src="content/m2.js"></script>
+  <script src="content/m3.js"></script>
+  <script src="content/m4.js"></script>
+  <script src="content/m5.js"></script>
+  <script src="content/m6.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => window.App.start());</script>
+</body>
+</html>

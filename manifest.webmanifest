@@ -1,0 +1,26 @@
+{
+  "name": "StatLab · Statistical Methods for AI/ML",
+  "short_name": "StatLab",
+  "description": "An interactive course companion for Statistical Methods in AI/ML.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0e17",
+  "theme_color": "#0b0e17",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/maskable-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

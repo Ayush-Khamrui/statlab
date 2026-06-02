@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StatLab · Statistical Methods for AI/ML</title>
   <meta name="description" content="An interactive course companion for Introduction to Statistical Methods (M.Tech AI/ML)." />
+  <meta name="theme-color" content="#0b0e17" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="StatLab" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg" />
 
   <!-- KaTeX for beautiful math (loads from CDN when online; app still works offline, math falls back to raw text) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" onerror="window.__katexCSSFailed=true" />
@@ -80,6 +87,15 @@
   <script src="content/m4.js"></script>
   <script src="content/m5.js"></script>
   <script src="content/m6.js"></script>
-  <script>window.addEventListener('DOMContentLoaded', () => window.App.start());</script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      window.App.start();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('Service worker registration failed', err);
+        });
+      }
+    });
+  </script>
 </body>
 </html>

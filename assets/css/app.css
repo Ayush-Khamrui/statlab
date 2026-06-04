@@ -108,6 +108,20 @@ kbd {
   transition: transform .25s ease;
 }
 .sidebar-inner { padding: 18px 14px 40px; }
+.track-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; margin-bottom: 14px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
+.track-tab { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; cursor: pointer;
+  padding: 8px 10px; border-radius: 12px; border: 1px solid transparent; background: transparent;
+  color: var(--text-dim); font-family: var(--font); text-align: left; transition: background .2s, color .2s, border-color .2s; }
+.track-tab:hover { color: var(--text); background: var(--panel-2); }
+.track-tab.active { color: var(--text); background: var(--panel-2); border-color: var(--border-strong); }
+.track-tab.active .tt-label { background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.tt-label { font-size: 12.5px; font-weight: 700; line-height: 1.2; }
+.tt-pct { font-size: 11px; font-weight: 700; color: var(--accent-2); }
+.track-block { margin-top: 28px; }
+.track-block h2 { display: flex; align-items: baseline; gap: 10px; }
+.track-block-pct { font-size: 12px; font-weight: 700; color: var(--accent-2); letter-spacing: .3px; }
+.track-block .module-cards { margin-top: 14px; }
 .overall-progress { display: flex; align-items: center; gap: 14px; padding: 12px; margin-bottom: 14px;
   background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
 .ring-wrap { position: relative; width: 60px; height: 60px; flex-shrink: 0; }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'statlab-pwa-v1';
+const CACHE_NAME = 'statlab-pwa-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -13,6 +13,10 @@ const APP_SHELL = [
   './content/m4.js',
   './content/m5.js',
   './content/m6.js',
+  './content/ml1.js',
+  './content/ml2.js',
+  './content/ml3.js',
+  './content/ml4.js',
   './assets/icons/icon.svg',
   './assets/icons/maskable-icon.svg'
 ];

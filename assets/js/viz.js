@@ -11,7 +11,7 @@
   const cs = () => getComputedStyle(document.body);
   const col = n => cs().getPropertyValue(n).trim() || '#888';
   const COL = () => ({
-    accent: col('--accent'), accent2: col('--accent-2'), gold: col('--gold'),
+    accent: col('--accent'), accent2: col('--accent-2'), accent3: col('--accent-3'), gold: col('--gold'),
     green: col('--green'), red: col('--red'), blue: col('--blue'),
     text: col('--text'), dim: col('--text-dim'), faint: col('--text-faint'),
     border: col('--border-strong'), panel: col('--panel-2')
@@ -230,6 +230,358 @@
     s.redrawHook = draw;
     addSlider(s.controls, { label: 'Skew', min: -1, max: 1, step: 0.05, value: 0, fmt: v => v.toFixed(2) }, v => { skew = v; draw(); });
     draw();
+  };
+
+  /* =========================================================
+     MACHINE LEARNING — Foundations
+     ========================================================= */
+
+  Viz.mlProblemMap = function (node) {
+    const s = scaffold(node, { title: 'ML problem map: choose the task before the model', desc: 'Move between common AI/ML problem framings. The model family follows the decision, labels, and feedback loop.', height: 280 });
+    const states = {
+      supervised: { label: 'Supervised', color: '--accent-2', nodes: [['Features X', .18, .52], ['Labels y', .18, .24], ['Train model', .48, .38], ['Predict future', .78, .38], ['Metric', .78, .68]], lines: [[0, 2], [1, 2], [2, 3], [3, 4]] },
+      unsupervised: { label: 'Unsupervised', color: '--gold', nodes: [['Raw data X', .18, .42], ['Representation', .43, .26], ['Clusters', .68, .28], ['Anomalies', .68, .56], ['Human naming', .43, .72]], lines: [[0, 1], [1, 2], [1, 3], [2, 4], [3, 4]] },
+      ranking: { label: 'Ranking', color: '--green', nodes: [['User/context', .18, .30], ['Items', .18, .62], ['Scoring model', .48, .46], ['Ordered list', .76, .34], ['Clicks / value', .76, .66]], lines: [[0, 2], [1, 2], [2, 3], [3, 4]] },
+      rl: { label: 'Reinforcement', color: '--red', nodes: [['State', .18, .48], ['Policy', .42, .28], ['Action', .66, .48], ['Reward', .42, .72], ['Environment', .82, .72]], lines: [[0, 1], [1, 2], [2, 4], [4, 3], [3, 1]] }
+    };
+    let mode = 'supervised';
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), m = states[mode], color = col(m.color);
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = c.panel; ctx.fillRect(22, 20, w - 44, h - 44);
+      ctx.strokeStyle = c.border; ctx.strokeRect(22, 20, w - 44, h - 44);
+      const pts = m.nodes.map(n => ({ text: n[0], x: n[1] * w, y: n[2] * h }));
+      ctx.lineWidth = 2;
+      m.lines.forEach(([a, b]) => {
+        const A = pts[a], B = pts[b];
+        ctx.strokeStyle = color + 'aa';
+        ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+        const ang = Math.atan2(B.y - A.y, B.x - A.x), ax = B.x - Math.cos(ang) * 58, ay = B.y - Math.sin(ang) * 25;
+        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax - 8 * Math.cos(ang - .5), ay - 8 * Math.sin(ang - .5)); ctx.lineTo(ax - 8 * Math.cos(ang + .5), ay - 8 * Math.sin(ang + .5)); ctx.closePath(); ctx.fill();
+      });
+      pts.forEach(p => {
+        const bw = Math.min(150, Math.max(92, p.text.length * 8 + 24)), bh = 38;
+        ctx.fillStyle = '#0b0e17cc'; ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.roundRect(p.x - bw / 2, p.y - bh / 2, bw, bh, 10); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = c.text; ctx.font = '700 12px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.text, p.x, p.y);
+      });
+      s.readout.innerHTML = '<b>' + m.label + '</b> framing: ' + (
+        mode === 'supervised' ? 'you have labelled examples; optimize predictive performance on unseen data.' :
+        mode === 'unsupervised' ? 'you discover structure, then validate the story with domain evidence.' :
+        mode === 'ranking' ? 'you optimize ordering and user/business value, not just point prediction.' :
+        'you learn actions from delayed rewards; use only when feedback is sequential and interactive.'
+      );
+    }
+    addSeg(s.controls, [
+      { label: 'Supervised', value: 'supervised' },
+      { label: 'Unsupervised', value: 'unsupervised' },
+      { label: 'Ranking', value: 'ranking' },
+      { label: 'RL', value: 'rl' }
+    ], mode, v => { mode = v; draw(); });
+    s.redrawHook = draw; draw();
+  };
+
+  Viz.biasVariance = function (node) {
+    const s = scaffold(node, { title: 'Bias–variance: model complexity vs validation error', desc: 'Increase complexity. Training error keeps falling, but validation error bottoms out and then rises when the model starts memorising noise.', height: 260 });
+    let complexity = 4;
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), f = frame(ctx, w, h, { l: 46, r: 20, t: 18, b: 42 });
+      f.clear(); f.axes(0, 10, 0, 1, 'model complexity', 'error');
+      function train(x) { return .78 * Math.exp(-x / 3.2) + .08; }
+      function valid(x) { return .2 + .42 * Math.exp(-x / 2.2) + .024 * (x - 5.2) ** 2; }
+      function curve(fn, color) {
+        ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath();
+        for (let i = 0; i <= 120; i++) { const x = i / 12, y = fn(x); const px = f.X(x, 0, 10), py = f.Y(y, 0, 1); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+        ctx.stroke();
+      }
+      curve(train, c.accent2); curve(valid, c.gold);
+      const x = complexity, tr = train(x), va = valid(x), px = f.X(x, 0, 10);
+      ctx.strokeStyle = c.red; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(px, f.pad.t); ctx.lineTo(px, h - f.pad.b); ctx.stroke(); ctx.setLineDash([]);
+      [['train', tr, c.accent2], ['validation', va, c.gold]].forEach(([lab, y, color], i) => {
+        ctx.fillStyle = color; ctx.beginPath(); ctx.arc(px, f.Y(y, 0, 1), 6, 0, 7); ctx.fill();
+        ctx.font = '700 12px Inter'; ctx.textAlign = 'left'; ctx.fillText(lab, f.pad.l + 12, f.pad.t + 18 + i * 18);
+      });
+      const zone = x < 3 ? 'underfitting: high bias' : x > 7 ? 'overfitting: high variance' : 'healthy range: useful signal without memorising too much';
+      s.readout.innerHTML = 'Complexity <b>' + x.toFixed(1) + '</b> → train error <b>' + tr.toFixed(2) + '</b>, validation error <b>' + va.toFixed(2) + '</b>. Diagnosis: <b>' + zone + '</b>.';
+    }
+    s.redrawHook = draw;
+    addSlider(s.controls, { label: 'Complexity', min: 0, max: 10, step: .1, value: complexity, fmt: v => v.toFixed(1) }, v => { complexity = v; draw(); });
+    draw();
+  };
+
+  Viz.mlGradientDescent = function (node) {
+    const s = scaffold(node, { title: 'Gradient descent: learning rate as step size', desc: 'A tiny learning rate crawls. A reasonable one descends. A large one bounces around or diverges.', height: 260 });
+    let lr = .18, iter = 0, x = -2.8, path = [];
+    function loss(t) { return .12 * (t + 2.2) ** 2 * (t - 1.8) ** 2 + .18 * (t + .2) ** 2 + .4; }
+    function grad(t) { const e = 1e-4; return (loss(t + e) - loss(t - e)) / (2 * e); }
+    function reset() { iter = 0; x = -2.8; path = [x]; draw(); }
+    function step() { x = Math.max(-3.4, Math.min(3.4, x - lr * grad(x))); path.push(x); iter++; draw(); }
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), f = frame(ctx, w, h, { l: 42, r: 18, t: 16, b: 35 });
+      f.clear(); f.axes(-3.5, 3.5, 0, 6, 'parameter θ', 'loss');
+      ctx.strokeStyle = c.accent; ctx.lineWidth = 3; ctx.beginPath();
+      for (let i = 0; i <= 220; i++) { const tx = -3.5 + 7 * i / 220, y = loss(tx); const px = f.X(tx, -3.5, 3.5), py = f.Y(y, 0, 6); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+      ctx.stroke();
+      ctx.strokeStyle = c.gold; ctx.lineWidth = 1.5; ctx.beginPath();
+      path.forEach((tx, i) => { const px = f.X(tx, -3.5, 3.5), py = f.Y(loss(tx), 0, 6); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+      ctx.stroke();
+      ctx.fillStyle = c.red; ctx.beginPath(); ctx.arc(f.X(x, -3.5, 3.5), f.Y(loss(x), 0, 6), 7, 0, 7); ctx.fill();
+      s.readout.innerHTML = 'iteration <b>' + iter + '</b> · θ=<b>' + x.toFixed(3) + '</b> · loss=<b>' + loss(x).toFixed(3) + '</b> · learning rate=<b>' + lr.toFixed(2) + '</b>';
+    }
+    s.redrawHook = draw;
+    addSlider(s.controls, { label: 'Learning rate η', min: .02, max: .8, step: .02, value: lr, fmt: v => v.toFixed(2) }, v => { lr = v; draw(); });
+    addBtn(s.controls, 'Step', '', step);
+    addBtn(s.controls, 'Run 10', 'ghost', () => { for (let i = 0; i < 10; i++) step(); });
+    addBtn(s.controls, 'Reset', 'ghost', reset);
+    reset();
+  };
+
+  Viz.classificationThreshold = function (node) {
+    const s = scaffold(node, { title: 'Threshold tuning: precision vs recall', desc: 'Move the threshold on predicted probabilities. Lower thresholds catch more positives; higher thresholds reduce false alarms.', height: 250 });
+    let threshold = .5;
+    const scores = [];
+    for (let i = 0; i < 120; i++) scores.push({ y: 0, p: Math.max(0.02, Math.min(.98, .18 + Math.random() * .45 + randn() * .08)) });
+    for (let i = 0; i < 36; i++) scores.push({ y: 1, p: Math.max(0.02, Math.min(.98, .48 + Math.random() * .42 + randn() * .08)) });
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), f = frame(ctx, w, h, { l: 42, r: 18, t: 18, b: 38 });
+      f.clear(); f.axes(0, 1, 0, 1, 'predicted probability', '');
+      const bins = Array.from({ length: 20 }, () => ({ p: 0, n: 0 }));
+      scores.forEach(r => { const b = Math.min(19, Math.floor(r.p * 20)); r.y ? bins[b].p++ : bins[b].n++; });
+      const maxb = Math.max(...bins.map(b => b.p + b.n), 1);
+      bins.forEach((b, i) => {
+        const x = i / 20, bw = f.iw / 22, base = h - f.pad.b, hp = b.p / maxb * f.ih, hn = b.n / maxb * f.ih;
+        ctx.fillStyle = c.red + '88'; ctx.fillRect(f.X(x, 0, 1), base - hn, bw, hn);
+        ctx.fillStyle = c.green + 'aa'; ctx.fillRect(f.X(x, 0, 1), base - hn - hp, bw, hp);
+      });
+      const tx = f.X(threshold, 0, 1);
+      ctx.strokeStyle = c.gold; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(tx, f.pad.t); ctx.lineTo(tx, h - f.pad.b); ctx.stroke();
+      let tp = 0, fp = 0, tn = 0, fn = 0;
+      scores.forEach(r => { const pred = r.p >= threshold; if (pred && r.y) tp++; else if (pred) fp++; else if (r.y) fn++; else tn++; });
+      const precision = tp / Math.max(1, tp + fp), recall = tp / Math.max(1, tp + fn), f1 = 2 * precision * recall / Math.max(1e-9, precision + recall);
+      s.readout.innerHTML = 'threshold=<b>' + threshold.toFixed(2) + '</b> · TP=<b>' + tp + '</b> FP=<b>' + fp + '</b> FN=<b>' + fn + '</b> TN=<b>' + tn + '</b> · precision=<b>' + precision.toFixed(2) + '</b> recall=<b>' + recall.toFixed(2) + '</b> F1=<b>' + f1.toFixed(2) + '</b>';
+    }
+    s.redrawHook = draw;
+    addSlider(s.controls, { label: 'Threshold', min: .05, max: .95, step: .01, value: threshold, fmt: v => v.toFixed(2) }, v => { threshold = v; draw(); });
+    draw();
+  };
+
+  Viz.decisionTreeSplit = function (node) {
+    const s = scaffold(node, { title: 'Decision tree split: reduce impurity with one question', desc: 'Move the vertical split. A useful split separates classes and makes child nodes purer.', height: 270 });
+    let split = .52;
+    const pts = [];
+    for (let i = 0; i < 90; i++) { const x = Math.random(), y = Math.random(); pts.push({ x, y, cls: (x + .35 * y + randn() * .12 > .62) ? 1 : 0 }); }
+    function gini(a) { if (!a.length) return 0; const p = a.filter(v => v.cls).length / a.length; return 1 - p * p - (1 - p) * (1 - p); }
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), pad = { l: 28, r: 18, t: 18, b: 28 }, iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = c.border; ctx.strokeRect(pad.l, pad.t, iw, ih);
+      pts.forEach(p => { ctx.fillStyle = p.cls ? c.green : c.red; ctx.beginPath(); ctx.arc(pad.l + p.x * iw, pad.t + (1 - p.y) * ih, 5, 0, 7); ctx.fill(); });
+      const sx = pad.l + split * iw; ctx.strokeStyle = c.gold; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(sx, pad.t); ctx.lineTo(sx, pad.t + ih); ctx.stroke();
+      const left = pts.filter(p => p.x < split), right = pts.filter(p => p.x >= split);
+      const weighted = (left.length * gini(left) + right.length * gini(right)) / pts.length;
+      ctx.fillStyle = c.text; ctx.font = '700 12px Inter'; ctx.textAlign = 'center'; ctx.fillText('x < ' + split.toFixed(2) + '?', sx, 14);
+      s.readout.innerHTML = 'parent gini=<b>' + gini(pts).toFixed(3) + '</b> · left gini=<b>' + gini(left).toFixed(3) + '</b> · right gini=<b>' + gini(right).toFixed(3) + '</b> · weighted child impurity=<b>' + weighted.toFixed(3) + '</b>';
+    }
+    s.redrawHook = draw;
+    addSlider(s.controls, { label: 'Split position', min: .1, max: .9, step: .01, value: split, fmt: v => v.toFixed(2) }, v => { split = v; draw(); });
+    draw();
+  };
+
+  Viz.kmeansPlayground = function (node) {
+    const s = scaffold(node, { title: 'K-means: assign points, move centroids, repeat', desc: 'Run one iteration at a time. Assignments depend on distance, so feature scaling matters in real datasets.', height: 280 });
+    let K = 3, iter = 0, pts = [], centers = [];
+    const colors = ['--accent-2', '--gold', '--red', '--green', '--blue'];
+    function init() {
+      pts = [];
+      const blobs = [[.24, .28], [.72, .36], [.5, .75]];
+      blobs.forEach(([cx, cy]) => { for (let i = 0; i < 34; i++) pts.push({ x: Math.max(.04, Math.min(.96, cx + randn() * .08)), y: Math.max(.04, Math.min(.96, cy + randn() * .08)), k: 0 }); });
+      centers = Array.from({ length: K }, () => ({ x: .15 + Math.random() * .7, y: .15 + Math.random() * .7 }));
+      iter = 0; assign(); draw();
+    }
+    function assign() {
+      pts.forEach(p => {
+        let best = 0, bd = Infinity;
+        centers.forEach((c, k) => { const d = (p.x - c.x) ** 2 + (p.y - c.y) ** 2; if (d < bd) { bd = d; best = k; } });
+        p.k = best;
+      });
+    }
+    function move() {
+      centers.forEach((c, k) => {
+        const ps = pts.filter(p => p.k === k);
+        if (ps.length) { c.x = mean(ps.map(p => p.x)); c.y = mean(ps.map(p => p.y)); }
+      });
+      assign(); iter++;
+    }
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), pad = 24, iw = w - pad * 2, ih = h - pad * 2;
+      ctx.clearRect(0, 0, w, h); ctx.strokeStyle = c.border; ctx.strokeRect(pad, pad, iw, ih);
+      pts.forEach(p => { ctx.fillStyle = col(colors[p.k % colors.length]) + 'bb'; ctx.beginPath(); ctx.arc(pad + p.x * iw, pad + (1 - p.y) * ih, 4, 0, 7); ctx.fill(); });
+      centers.forEach((ctr, k) => {
+        const x = pad + ctr.x * iw, y = pad + (1 - ctr.y) * ih;
+        ctx.fillStyle = col(colors[k % colors.length]); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(x, y - 10); ctx.lineTo(x + 10, y); ctx.lineTo(x, y + 10); ctx.lineTo(x - 10, y); ctx.closePath(); ctx.fill(); ctx.stroke();
+      });
+      const inertia = pts.reduce((sum, p) => { const ctr = centers[p.k]; return sum + (p.x - ctr.x) ** 2 + (p.y - ctr.y) ** 2; }, 0);
+      s.readout.innerHTML = 'iteration=<b>' + iter + '</b> · K=<b>' + K + '</b> · within-cluster SSE=<b>' + inertia.toFixed(3) + '</b>';
+    }
+    s.redrawHook = draw;
+    addSlider(s.controls, { label: 'K', min: 2, max: 5, step: 1, value: K }, v => { K = v; init(); });
+    addBtn(s.controls, 'One iteration', '', () => { move(); draw(); });
+    addBtn(s.controls, 'Run 5', 'ghost', () => { for (let i = 0; i < 5; i++) move(); draw(); });
+    addBtn(s.controls, 'Reseed', 'ghost', init);
+    init();
+  };
+
+  Viz.neuralNetworkPlayground = function (node) {
+    const s = scaffold(node, { title: 'Neural network decision boundary', desc: 'Change hidden units and non-linearity. More hidden units create a more flexible boundary, but flexibility needs regularisation and data.', height: 280 });
+    let hidden = 4, act = 'relu';
+    const pts = [];
+    for (let i = 0; i < 180; i++) { const x = Math.random() * 2 - 1, y = Math.random() * 2 - 1; pts.push({ x, y, cls: (x * x + y * y + randn() * .08 < .42) ? 1 : 0 }); }
+    function score(x, y) {
+      let z = 0;
+      for (let k = 0; k < hidden; k++) {
+        const a = 2 * Math.PI * k / hidden, p = Math.cos(a) * x + Math.sin(a) * y - .35;
+        z += act === 'tanh' ? Math.tanh(4 * p) : Math.max(0, 3 * p);
+      }
+      return z / hidden;
+    }
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), pad = 24, iw = w - 2 * pad, ih = h - 2 * pad;
+      ctx.clearRect(0, 0, w, h);
+      const cells = 44;
+      for (let i = 0; i < cells; i++) for (let j = 0; j < cells; j++) {
+        const x = i / (cells - 1) * 2 - 1, y = j / (cells - 1) * 2 - 1, on = score(x, y) > .18;
+        ctx.fillStyle = on ? c.green + '22' : c.red + '22';
+        ctx.fillRect(pad + i * iw / cells, pad + (cells - 1 - j) * ih / cells, iw / cells + 1, ih / cells + 1);
+      }
+      ctx.strokeStyle = c.border; ctx.strokeRect(pad, pad, iw, ih);
+      pts.forEach(p => { ctx.fillStyle = p.cls ? c.green : c.red; ctx.beginPath(); ctx.arc(pad + (p.x + 1) / 2 * iw, pad + (1 - (p.y + 1) / 2) * ih, 4, 0, 7); ctx.fill(); });
+      s.readout.innerHTML = 'Hidden units=<b>' + hidden + '</b> · activation=<b>' + act + '</b> · boundary complexity grows with representation capacity.';
+    }
+    s.redrawHook = draw;
+    addSlider(s.controls, { label: 'Hidden units', min: 1, max: 12, step: 1, value: hidden }, v => { hidden = v; draw(); });
+    addSeg(s.controls, [{ label: 'ReLU', value: 'relu' }, { label: 'tanh', value: 'tanh' }], act, v => { act = v; draw(); });
+    draw();
+  };
+
+  Viz.activationExplorer = function (node) {
+    const s = scaffold(node, { title: 'Activation functions and gradient flow', desc: 'Compare sigmoid, tanh, ReLU and GELU-like curves. Saturating activations can make gradients tiny.', height: 250 });
+    let mode = 'relu';
+    function fn(x) {
+      if (mode === 'sigmoid') return 1 / (1 + Math.exp(-x));
+      if (mode === 'tanh') return Math.tanh(x);
+      if (mode === 'gelu') return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x ** 3)));
+      return Math.max(0, x);
+    }
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(), f = frame(ctx, w, h, { l: 42, r: 18, t: 18, b: 35 });
+      f.clear(); f.axes(-5, 5, -1.5, 5, 'input z', 'activation φ(z)');
+      ctx.strokeStyle = c.accent2; ctx.lineWidth = 3; ctx.beginPath();
+      for (let i = 0; i <= 220; i++) { const x = -5 + 10 * i / 220, y = fn(x), px = f.X(x, -5, 5), py = f.Y(y, -1.5, 5); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+      ctx.stroke();
+      s.readout.innerHTML = '<b>' + mode + '</b>: ' + (
+        mode === 'relu' ? 'simple, sparse, avoids saturation on positive side; common default.' :
+        mode === 'sigmoid' ? 'squashes to 0..1 but saturates, causing tiny gradients for large |z|.' :
+        mode === 'tanh' ? 'zero-centered sigmoid-like curve; still saturates.' :
+        'smooth ReLU-like activation used in many transformer-style networks.'
+      );
+    }
+    addSeg(s.controls, [{ label: 'ReLU', value: 'relu' }, { label: 'Sigmoid', value: 'sigmoid' }, { label: 'tanh', value: 'tanh' }, { label: 'GELU', value: 'gelu' }], mode, v => { mode = v; draw(); });
+    s.redrawHook = draw; draw();
+  };
+
+  Viz.cnnKernel = function (node) {
+    const s = scaffold(node, { title: 'Convolution filter scanning an image', desc: 'A 3×3 edge detector slides over the grid. Bright output means the local patch matches the filter.', height: 290 });
+    let pos = 1;
+    const grid = [
+      [0,0,0,1,1,1,1],
+      [0,0,0,1,1,1,1],
+      [0,0,0,1,1,1,1],
+      [0,0,0,1,1,1,1],
+      [0,0,0,1,1,1,1],
+      [0,0,0,1,1,1,1],
+      [0,0,0,1,1,1,1]
+    ];
+    const K = [[-1,0,1],[-1,0,1],[-1,0,1]];
+    function convAt(x, y) { let v = 0; for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) v += grid[y + r][x + c] * K[r][c]; return v; }
+    function draw() {
+      const ctx = s.ctx, w = s.w, h = s.h, c = COL(); ctx.clearRect(0,0,w,h);
+      const size = Math.min(34, (w - 80) / 11), ox = 34, oy = 30;
+      for (let r = 0; r < 7; r++) for (let colm = 0; colm < 7; colm++) {
+        const v = grid[r][colm]; ctx.fillStyle = v ? c.accent2 : c.panel; ctx.fillRect(ox + colm * size, oy + r * size, size - 2, size - 2);
+      }
+      const x = pos % 5, y = Math.floor(pos / 5);
+      ctx.strokeStyle = c.gold; ctx.lineWidth = 3; ctx.strokeRect(ox + x * size - 1, oy + y * size - 1, size * 3 - 1, size * 3 - 1);
+      const outX = ox + 8 * size + 30, outY = oy;
+      for (let r = 0; r < 5; r++) for (let colm = 0; colm < 5; colm++) {
+        const v = Math.max(0, Math.min(1, (convAt(colm,r) + 3) / 6)); ctx.fillStyle = 'rgba(255,206,92,' + (.15 + .8 * v) + ')';
+        ctx.fillRect(outX + colm * size, outY + r * size, size - 2, size - 2);
+      }
+      ctx.fillStyle = c.text; ctx.font = '700 12px Inter'; ctx.textAlign = 'center'; ctx.fillText('input', ox + 3.5 * size, oy - 10); ctx.fillText('feature map', outX + 2.5 * size, outY - 10);
+      s.readout.innerHTML = 'Current patch response=<b>' + convAt(x,y).toFixed(1) + '</b>. This vertical-edge filter activates strongly near the boundary.';
+    }
+    addSlider(s.controls, { label: 'Kernel position', min: 0, max: 24, step: 1, value: pos }, v => { pos = v; draw(); });
+    s.redrawHook = draw; draw();
+  };
+
+  Viz.attentionHeatmap = function (node) {
+    const s = scaffold(node, { title: 'Self-attention heatmap', desc: 'Select a query token. Brighter cells are tokens it attends to more strongly.', height: 270 });
+    const toks = ['The','model','retrieves','relevant','context','before','answering'];
+    let q = 1;
+    function weight(i,j) {
+      const semantic = (i === 1 && [2,6].includes(j)) || (i === 6 && [2,4].includes(j)) || (i === 4 && [3,5].includes(j)) ? 2.2 : 0;
+      return Math.exp(1.3 - Math.abs(i-j)*.45 + semantic + (i===j ? .9 : 0));
+    }
+    function draw() {
+      const ctx=s.ctx,w=s.w,h=s.h,c=COL(); ctx.clearRect(0,0,w,h);
+      const n=toks.length, size=Math.min(44,(w-100)/n), ox=70, oy=30;
+      for(let i=0;i<n;i++){ let row=[]; for(let j=0;j<n;j++) row.push(weight(i,j)); const sum=row.reduce((a,b)=>a+b,0);
+        for(let j=0;j<n;j++){ const v=row[j]/sum, alpha=.12+Math.min(.88,v*5); ctx.fillStyle='rgba(124,92,255,'+alpha+')'; ctx.fillRect(ox+j*size,oy+i*size,size-2,size-2);
+          if(i===q){ ctx.strokeStyle=c.gold; ctx.lineWidth=2; ctx.strokeRect(ox+j*size,oy+i*size,size-2,size-2); }
+        }
+      }
+      ctx.fillStyle=c.text; ctx.font='11px Inter'; ctx.textAlign='right'; toks.forEach((t,i)=>ctx.fillText(t,ox-8,oy+i*size+size*.62));
+      ctx.save(); ctx.translate(ox,oy-8); ctx.textAlign='left'; toks.forEach((t,i)=>{ctx.save();ctx.translate(i*size+5,0);ctx.rotate(-.55);ctx.fillText(t,0,0);ctx.restore();}); ctx.restore();
+      const vals=toks.map((t,j)=>({t,v:weight(q,j)})); const total=vals.reduce((a,b)=>a+b.v,0); vals.sort((a,b)=>b.v-a.v);
+      s.readout.innerHTML='Query token <b>'+toks[q]+'</b> attends most to <b>'+vals.slice(0,3).map(x=>x.t+' '+(x.v/total*100).toFixed(0)+'%').join(', ')+'</b>.';
+    }
+    addSlider(s.controls,{label:'Query token',min:0,max:toks.length-1,step:1,value:q,fmt:v=>toks[v]},v=>{q=v;draw();});
+    s.redrawHook=draw; draw();
+  };
+
+  Viz.recommenderFlow = function(node) {
+    const s=scaffold(node,{title:'Recommender system pipeline',desc:'A practical recommender is a multi-stage system, not one model.',height:250});
+    let stage=1;
+    function draw(){const ctx=s.ctx,w=s.w,h=s.h,c=COL();ctx.clearRect(0,0,w,h);const labels=['User signals','Candidate generation','Ranking model','Re-ranking rules','Feedback logs'];const xs=labels.map((_,i)=>60+i*(w-120)/(labels.length-1));const y=h/2-10;
+      for(let i=0;i<labels.length-1;i++){ctx.strokeStyle=c.border;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xs[i]+55,y);ctx.lineTo(xs[i+1]-55,y);ctx.stroke();}
+      labels.forEach((lab,i)=>{ctx.fillStyle=i<=stage?c.accent2:c.panel;ctx.strokeStyle=i===stage?c.gold:c.border;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(xs[i]-58,y-28,116,56,12);ctx.fill();ctx.stroke();ctx.fillStyle=i<=stage?'#061b1a':c.text;ctx.font='700 11px Inter';ctx.textAlign='center';lab.split(' ').forEach((p,k)=>ctx.fillText(p,xs[i],y-4+k*14));});
+      s.readout.innerHTML='Stage <b>'+labels[stage]+'</b>: '+['collect context, history, item views, purchases, skips','quickly retrieve maybe-relevant items','score candidates with richer features','apply diversity, safety, business and freshness constraints','log impressions and outcomes for learning'][stage]+'.';
+    }
+    addSlider(s.controls,{label:'Pipeline stage',min:0,max:4,step:1,value:stage,fmt:v=>String(+v+1)},v=>{stage=v;draw();});s.redrawHook=draw;draw();
+  };
+
+  Viz.ragPipeline = function(node) {
+    const s=scaffold(node,{title:'RAG pipeline: retrieval before generation',desc:'Click through the path from documents to grounded answer.',height:250});
+    let step=2;
+    function draw(){const ctx=s.ctx,w=s.w,h=s.h,c=COL();ctx.clearRect(0,0,w,h);const labels=['Docs','Chunks','Embeddings','Vector search','Rerank','LLM answer'];const xs=labels.map((_,i)=>50+i*(w-100)/(labels.length-1));const y=h/2-5;
+      labels.forEach((lab,i)=>{if(i){ctx.strokeStyle=i<=step?c.accent:c.border;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xs[i-1]+36,y);ctx.lineTo(xs[i]-36,y);ctx.stroke();}ctx.fillStyle=i<=step?c.accent+'44':c.panel;ctx.strokeStyle=i===step?c.gold:c.border;ctx.beginPath();ctx.roundRect(xs[i]-38,y-30,76,60,12);ctx.fill();ctx.stroke();ctx.fillStyle=c.text;ctx.font='700 10px Inter';ctx.textAlign='center';lab.split(' ').forEach((p,k)=>ctx.fillText(p,xs[i],y-4+k*13));});
+      s.readout.innerHTML='Current step: <b>'+labels[step]+'</b>. '+['Source knowledge base.','Split content into retrievable units.','Map text to semantic vectors.','Find likely relevant context.','Improve precision before prompt.','Generate answer grounded in retrieved context.'][step];
+    }
+    addSlider(s.controls,{label:'RAG step',min:0,max:5,step:1,value:step,fmt:v=>String(+v+1)},v=>{step=v;draw();});s.redrawHook=draw;draw();
+  };
+
+  Viz.mlLifecycle = function(node) {
+    const s=scaffold(node,{title:'Production ML lifecycle',desc:'A production model is a loop: data, train, validate, deploy, monitor, improve.',height:260});
+    let active=0; const labels=['Data','Features','Train','Validate','Deploy','Monitor'];
+    function draw(){const ctx=s.ctx,w=s.w,h=s.h,c=COL();ctx.clearRect(0,0,w,h);const cx=w/2,cy=h/2,r=Math.min(w,h)*.34;labels.forEach((lab,i)=>{const a=-Math.PI/2+i*2*Math.PI/labels.length,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;ctx.strokeStyle=c.border;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i===active?c.gold:c.accent2;ctx.beginPath();ctx.arc(x,y,35,0,7);ctx.fill();ctx.fillStyle=i===active?'#211700':'#061b1a';ctx.font='700 11px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lab,x,y);});ctx.fillStyle=c.panel;ctx.strokeStyle=c.border;ctx.beginPath();ctx.arc(cx,cy,42,0,7);ctx.fill();ctx.stroke();ctx.fillStyle=c.text;ctx.font='800 12px Inter';ctx.fillText('ML',cx,cy);s.readout.innerHTML='<b>'+labels[active]+'</b>: '+['quality, labels, lineage, privacy','consistent training/serving transformations','reproducible experiment and artifact','offline metrics, slices, calibration','serving, fallback, rollback','drift, latency, cost, outcomes'][active]+'.';}
+    addSlider(s.controls,{label:'Lifecycle step',min:0,max:5,step:1,value:active,fmt:v=>labels[v]},v=>{active=v;draw();});s.redrawHook=draw;draw();
+  };
+
+  Viz.driftMonitor = function(node) {
+    const s=scaffold(node,{title:'Drift monitor: live data moves away from training',desc:'Shift the live distribution. Alerts fire when the mean moves several training standard deviations.',height:250});
+    let shift=0;
+    function draw(){const ctx=s.ctx,w=s.w,h=s.h,c=COL(),f=frame(ctx,w,h,{l:40,r:18,t:18,b:35});f.clear();f.axes(-4,6,0,.45,'feature value','density');function curve(mu,color){ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=220;i++){const x=-4+10*i/220,y=normPdf(x,mu,1);const px=f.X(x,-4,6),py=f.Y(y,0,.45);i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}curve(0,c.accent2);curve(shift,c.gold);const z=Math.abs(shift);s.readout.innerHTML='Training mean=<b>0</b>, live mean=<b>'+shift.toFixed(1)+'</b>, drift z-score=<b>'+z.toFixed(1)+'</b> · status: <b style="color:'+(z>3?c.red:z>2?c.gold:c.green)+'">'+(z>3?'alert':z>2?'watch':'normal')+'</b>.';}
+    addSlider(s.controls,{label:'Live distribution shift',min:-1,max:5,step:.1,value:shift,fmt:v=>v.toFixed(1)},v=>{shift=v;draw();});s.redrawHook=draw;draw();
   };
 
   /* =========================================================

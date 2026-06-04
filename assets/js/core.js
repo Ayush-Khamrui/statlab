@@ -33,12 +33,25 @@
       const done = m.allSections.filter(s => this.isDone(m.id, s.id)).length;
       return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
     },
-    overall() {
+    overall(filter) {
       let total = 0, done = 0;
-      Course.modules.forEach(m => { const s = this.moduleStats(m); total += s.total; done += s.done; });
+      Course.modules.forEach(m => { if (filter && !filter(m)) return; const s = this.moduleStats(m); total += s.total; done += s.done; });
       return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
     },
     reset() { this.data = {}; localStorage.removeItem(PKEY); }
+  };
+
+  // ---------- Tracks (Statistics vs Machine Learning) ----------
+  const Track = {
+    defs: [
+      { id: 'stats', label: 'Statistics', test: m => !/^ml/i.test(m.id) },
+      { id: 'ml', label: 'Machine Learning', test: m => /^ml/i.test(m.id) }
+    ],
+    active: localStorage.getItem('statlab.track') || 'stats',
+    def(id) { return this.defs.find(d => d.id === (id || this.active)) || this.defs[0]; },
+    of(m) { return /^ml/i.test(m.id) ? 'ml' : 'stats'; },
+    modules(id) { return Course.modules.filter(this.def(id).test); },
+    set(id) { this.active = id; localStorage.setItem('statlab.track', id); }
   };
 
   // ---------- Helpers ----------
@@ -251,12 +264,28 @@
   }
 
   // ---------- Navigation ----------
+  function buildTabs() {
+    const tabs = $('#track-tabs'); if (!tabs) return;
+    tabs.innerHTML = Track.defs.map(d => {
+      const o = Progress.overall(d.test);
+      return '<button class="track-tab' + (d.id === Track.active ? ' active' : '') + '" data-track="' + d.id + '">' +
+        '<span class="tt-label">' + d.label + '</span>' +
+        '<span class="tt-pct">' + o.pct + '%</span></button>';
+    }).join('');
+    $$('.track-tab', tabs).forEach(b => b.addEventListener('click', () => {
+      if (b.dataset.track === Track.active) return;
+      Track.set(b.dataset.track); buildNav();
+    }));
+  }
   function buildNav() {
+    if (!document.querySelector('#ringgrad')) {
+      // gradient def for ring (added once)
+      const svgGrad = '<svg width="0" height="0"><defs><linearGradient id="ringgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#29d3c2"/></linearGradient></defs></svg>';
+      document.body.insertAdjacentHTML('beforeend', svgGrad);
+    }
+    buildTabs();
     const nav = $('#nav'); nav.innerHTML = '';
-    // gradient def for ring
-    const svgGrad = '<svg width="0" height="0"><defs><linearGradient id="ringgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c5cff"/><stop offset="100%" stop-color="#29d3c2"/></linearGradient></defs></svg>';
-    document.body.insertAdjacentHTML('beforeend', svgGrad);
-    Course.modules.forEach(m => {
+    Track.modules().forEach(m => {
       const stats = Progress.moduleStats(m);
       const mod = el('div', 'nav-module'); mod.dataset.mid = m.id;
       const head = el('div', 'nav-mod-head',
@@ -277,11 +306,14 @@
     updateProgressUI();
   }
   function updateProgressUI() {
-    const o = Progress.overall();
+    const def = Track.def();
+    const o = Progress.overall(def.test);
     const ring = $('#overall-ring');
     if (ring) { const circ = 2 * Math.PI * 30; ring.style.strokeDasharray = circ; ring.style.strokeDashoffset = circ * (1 - o.pct / 100); }
     $('#overall-pct').textContent = o.pct + '%';
     $('#overall-sub').textContent = o.done + ' / ' + o.total + ' sections';
+    const lbl = $('.overall-text strong'); if (lbl) lbl.textContent = def.label;
+    Track.defs.forEach(d => { const t = $('.track-tab[data-track="' + d.id + '"] .tt-pct'); if (t) t.textContent = Progress.overall(d.test).pct + '%'; });
     Course.modules.forEach(m => {
       const stats = Progress.moduleStats(m);
       const node = $('.nav-module[data-mid="' + m.id + '"] .nav-mod-prog');
@@ -309,7 +341,7 @@
 
   function renderHome() {
     const o = Progress.overall();
-    const cards = Course.modules.map(m => {
+    const cardHtml = m => {
       const s = Progress.moduleStats(m);
       return '<div class="module-card" data-go="#/' + m.id + '/' + m.allSections[0].id + '">' +
         '<div class="mc-icon">' + m.icon + '</div>' +
@@ -318,12 +350,19 @@
         '<div class="mc-bar"><i style="width:' + s.pct + '%"></i></div>' +
         '<div class="mc-meta"><span>' + s.done + '/' + s.total + ' sections</span><span>' + s.pct + '%</span></div>' +
         '</div>';
+    };
+    const trackBlocks = Track.defs.map(d => {
+      const mods = Course.modules.filter(d.test);
+      if (!mods.length) return '';
+      const to = Progress.overall(d.test);
+      return '<div class="track-block">' +
+        '<h2>' + d.label + ' <span class="track-block-pct">' + to.done + '/' + to.total + ' · ' + to.pct + '%</span></h2>' +
+        '<div class="module-cards">' + mods.map(cardHtml).join('') + '</div></div>';
     }).join('');
     const html =
       '<section class="hero">' +
-      '<div class="crumb" style="justify-content:center">BITS PILANI · M.TECH AI/ML · AIMLCZC418</div>' +
       '<h1>Statistical Methods,<br><span class="grad-text">made intuitive & interactive</span></h1>' +
-      '<p class="lead">Your personal companion for the whole subject — narrative notes, animated intuitions, live graphs you can poke, Python you can run, and interview angles for your Tech&nbsp;Lead AI/ML move. Built from your lectures &amp; ISM notes.</p>' +
+      '<p class="lead">Your personal companion for the whole subject — narrative notes, animated intuitions, live graphs you can poke, Python you can run, and interview angles for your AI/ML journey.</p>' +
       '<div class="hero-cta">' +
       '<button class="btn-primary" data-go="#/' + Course.modules[0].id + '/' + Course.modules[0].allSections[0].id + '">' + (o.pct > 0 ? 'Continue learning →' : 'Start Module 1 →') + '</button>' +
       '<button class="btn-ghost" id="home-shuffle">🎲 Surprise me</button>' +
@@ -337,8 +376,7 @@
       '</section>' +
       '<div class="callout aiml" data-icon="🧭"><div class="callout-title">How to use this</div>' +
       '<p>Work module by module. Each section ends with a <b>“mark complete”</b> button that fills your progress rings. Every concept carries three lenses: <b style="color:var(--accent-2)">Intuition</b> (the mental picture), <b style="color:var(--gold)">Interview</b> (how it shows up for a Tech Lead), and <b style="color:var(--red)">Pitfall</b> (what trips people up). Press <kbd>/</kbd> anytime to jump to any topic.</p></div>' +
-      '<h2>The six modules</h2>' +
-      '<div class="module-cards">' + cards + '</div>';
+      trackBlocks;
     const wrap = setView(html);
     $$('[data-go]', wrap).forEach(b => b.addEventListener('click', () => location.hash = b.dataset.go));
     const sh = $('#home-shuffle', wrap);
@@ -412,7 +450,11 @@
     if (!h || h === 'home') { renderHome(); highlightNav(null, null); document.title = 'StatLab · Statistical Methods'; return; }
     const [mid, sid] = h.split('/');
     const m = Course.get(mid);
-    if (m) { renderSection(mid, sid || m.allSections[0].id); document.title = 'StatLab · ' + m.title; }
+    if (m) {
+      const tr = Track.of(m);
+      if (tr !== Track.active) { Track.set(tr); buildNav(); }
+      renderSection(mid, sid || m.allSections[0].id); document.title = 'StatLab · ' + m.title;
+    }
     else renderHome();
   }
 

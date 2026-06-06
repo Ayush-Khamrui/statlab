@@ -8,7 +8,7 @@ Course.addModule({
       id: 'framing', title: 'From regression to classification', icon: '🧭',
       search: 'classification decision boundary discriminant function generative model posterior probability linearly separable least squares outliers why linear regression fails',
       html: `
-<p class="lead">For classification we don't fit a best line — we find a <strong>decision boundary</strong> that separates the classes, and we usually express the answer as a <strong>probability</strong>.</p>
+<p class="lead">For classification we don't fit a best line; we find a <strong>decision boundary</strong> that separates the classes, and we usually express the answer as a <strong>probability</strong>.</p>
 
 <div class="callout definition" data-icon="📐"><div class="callout-title">Two ways to classify</div>
 <ul>
@@ -16,12 +16,12 @@ Course.addModule({
 <li><b>Generative models</b> learn the underlying distribution of each class, then use it to classify <em>and</em> to generate new synthetic data. Examples: Naïve Bayes, Gaussian Mixture Models.</li>
 </ul></div>
 
-<div class="callout intuition" data-icon="🧠"><div class="callout-title">Linearly separable or not</div><p>If two classes can be cleanly split, the data is <b>linearly separable</b> — find the line/hyperplane. Real data usually overlaps, so some misclassification is unavoidable; pick the boundary with the <b>lowest probability of error</b>. Whichever posterior probability is larger wins.</p></div>
+<div class="callout intuition" data-icon="🧠"><div class="callout-title">Linearly separable or not</div><p>If two classes can be cleanly split, the data is <b>linearly separable</b>, so you can find the line/hyperplane. Real data usually overlaps, so some misclassification is unavoidable; pick the boundary with the <b>lowest probability of error</b>. Whichever posterior probability is larger wins.</p></div>
 
 <h2>Why not just use linear regression?</h2>
-<p>You can fit a line and threshold it at $y=0.5$ to classify. It works on clean, separable data — but it is <b>very sensitive to outliers</b>: one extreme point swings the least-squares line and ruins the boundary (because MSE is outlier-sensitive).</p>
+<p>You can fit a line and threshold it at $y=0.5$ to classify. It works on clean, separable data, but it is <b>very sensitive to outliers</b>: one extreme point swings the least-squares line and ruins the boundary (because MSE is outlier-sensitive).</p>
 
-<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">The fix: logistic regression</div><p>Logistic regression is <b>robust to outliers</b> and outputs a proper probability in [0,1]. It uses regression machinery (gradient descent) but solves a classification problem — so it is "regression" in name only. For non-linearly-separable data, transform features or move to SVM / neural nets.</p></div>
+<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">The fix: logistic regression</div><p>Logistic regression is <b>robust to outliers</b> and outputs a proper probability in [0,1]. It uses regression machinery (gradient descent) but solves a classification problem, so it is "regression" in name only. For non-linearly-separable data, transform features or move to SVM / neural nets.</p></div>
 `
     },
     {
@@ -42,7 +42,7 @@ $$h_\\theta(x)=g(\\theta^T x)=\\frac{1}{1+e^{-\\theta^T x}}$$</div>
 
 <div class="viz" data-viz="classificationThreshold"></div>
 
-<div class="callout intuition" data-icon="🧠"><div class="callout-title">Log-odds: it's still linear</div><p>Rearranging gives $\\theta^T x=\\ln\\dfrac{p}{1-p}$ — the linear score equals the <b>log-odds</b> (log of the odds for vs against). So logistic regression is a <b>linear model</b> of the log-odds; the boundary $\\theta^T x=0$ is a line/hyperplane. The sigmoid just maps that linear score to a probability.</p></div>
+<div class="callout intuition" data-icon="🧠"><div class="callout-title">Log-odds: it's still linear</div><p>Rearranging gives $\\theta^T x=\\ln\\dfrac{p}{1-p}$: the linear score equals the <b>log-odds</b> (log of the odds for vs against). So logistic regression is a <b>linear model</b> of the log-odds; the boundary $\\theta^T x=0$ is a line/hyperplane. The sigmoid just maps that linear score to a probability.</p></div>
 
 <p>To build the hypothesis: count features → $d+1$ parameters → write $\\theta^T x=\\theta_0+\\theta_1x_1+\\dots$ → wrap in the sigmoid. Then solve for $\\theta$ exactly like linear regression: initialise, set learning rate, gradient descent.</p>
 `
@@ -53,7 +53,7 @@ $$h_\\theta(x)=g(\\theta^T x)=\\frac{1}{1+e^{-\\theta^T x}}$$</div>
       html: `
 <p class="lead">MSE on the sigmoid gives a non-convex cost full of local minima. So logistic regression uses a different, convex cost: <strong>cross-entropy (log loss)</strong>.</p>
 
-<div class="callout intuition" data-icon="🧠"><div class="callout-title">Designing the cost</div><p>We want: when actual $y=1$, the error is low if $\\hat y\\to1$ and high if $\\hat y\\to0$ — that's $-\\log(\\hat y)$. When $y=0$, we want the mirror — that's $-\\log(1-\\hat y)$. Combine them into one equation by switching with $y$ and $(1-y)$:</p></div>
+<div class="callout intuition" data-icon="🧠"><div class="callout-title">Designing the cost</div><p>We want: when actual $y=1$, the error is low if $\\hat y\\to1$ and high if $\\hat y\\to0$, which is $-\\log(\\hat y)$. When $y=0$, we want the mirror, which is $-\\log(1-\\hat y)$. Combine them into one equation by switching with $y$ and $(1-y)$:</p></div>
 
 <div class="formula"><span class="formula-label">Cross-entropy (log loss)</span>
 $$J(\\theta)=-\\frac{1}{n}\\sum_{i=1}^{n}\\Bigl[y^{(i)}\\log h_\\theta(x^{(i)})+(1-y^{(i)})\\log\\bigl(1-h_\\theta(x^{(i)})\\bigr)\\Bigr]$$</div>
@@ -62,7 +62,7 @@ $$J(\\theta)=-\\frac{1}{n}\\sum_{i=1}^{n}\\Bigl[y^{(i)}\\log h_\\theta(x^{(i)})+
 
 <div class="callout definition" data-icon="📐"><div class="callout-title">The surprise: same gradient as linear regression</div><p>Differentiating cross-entropy gives the <b>same</b> update form:
 $$\\theta_j\\leftarrow\\theta_j-\\alpha\\frac{1}{n}\\sum\\bigl(h_\\theta(x^{(i)})-y^{(i)}\\bigr)x_j^{(i)}$$
-The only difference from linear regression is that $h_\\theta(x)$ is now the sigmoid. Everything else — simultaneous update, $x_0=1$, regularisation — carries over unchanged.</p></div>
+The only difference from linear regression is that $h_\\theta(x)$ is now the sigmoid. Everything else (simultaneous update, $x_0=1$, regularisation) carries over unchanged.</p></div>
 
 <h2>Interpreting the coefficients</h2>
 <p>Because $\\theta^T x$ is the log-odds, a coefficient is the change in log-odds per unit change in its feature. Exponentiate to read it as an odds multiplier:</p>
@@ -82,10 +82,10 @@ The only difference from linear regression is that $h_\\theta(x)$ is now the sig
 
 <div class="callout definition" data-icon="📐"><div class="callout-title">The four cells</div>
 <ul>
-<li><b>TP</b> — true positive: positive, predicted positive (correct).</li>
-<li><b>TN</b> — true negative: negative, predicted negative (correct).</li>
-<li><b>FP</b> — false positive: negative, predicted positive (wrong).</li>
-<li><b>FN</b> — false negative: positive, predicted negative (wrong).</li>
+<li><b>TP</b> (true positive): positive, predicted positive (correct).</li>
+<li><b>TN</b> (true negative): negative, predicted negative (correct).</li>
+<li><b>FP</b> (false positive): negative, predicted positive (wrong).</li>
+<li><b>FN</b> (false negative): positive, predicted negative (wrong).</li>
 </ul><p>Rows = actual class, columns = predicted class. You fill it by matching $y$ with $\\hat y$ and counting.</p></div>
 
 <div class="formula"><span class="formula-label">Accuracy</span>
@@ -102,7 +102,7 @@ $$\\text{Accuracy}=\\frac{TP+TN}{TP+TN+FP+FN}$$</div>
 <h2>F1 score</h2>
 <div class="formula"><span class="formula-label">Harmonic mean of precision & recall</span>
 $$F_1=\\frac{2PR}{P+R}$$</div>
-<p>When you can't decide whether precision or recall matters more — common for imbalanced data — F1 balances both. Higher F1 = better model. All these range 0–1.</p>
+<p>When you can't decide whether precision or recall matters more (common for imbalanced data), F1 balances both. Higher F1 = better model. All these range 0–1.</p>
 
 <div class="callout interview" data-icon="💼"><div class="callout-title">Pick the metric from the cost of errors</div><p>Decide whether a false positive or a false negative hurts more <em>for your problem</em>. Medical diagnosis → optimise <b>recall</b> (don't miss sick patients). Fraud blocking → care about <b>precision</b> (don't block good users). Unsure → <b>F1</b>.</p></div>
 `
@@ -115,14 +115,14 @@ $$F_1=\\frac{2PR}{P+R}$$</div>
 
 <div class="callout definition" data-icon="📐"><div class="callout-title">TPR and FPR</div>
 <ul>
-<li><b>True Positive Rate</b> $=\\dfrac{TP}{TP+FN}$ (this is recall) — plotted on the y-axis.</li>
-<li><b>False Positive Rate</b> $=\\dfrac{FP}{FP+TN}$ — plotted on the x-axis.</li>
-</ul><p>We want <b>high TPR, low FPR</b> — the top-left corner $(0,1)$ is the ideal.</p></div>
+<li><b>True Positive Rate</b> $=\\dfrac{TP}{TP+FN}$ (this is recall), plotted on the y-axis.</li>
+<li><b>False Positive Rate</b> $=\\dfrac{FP}{FP+TN}$, plotted on the x-axis.</li>
+</ul><p>We want <b>high TPR, low FPR</b>: the top-left corner $(0,1)$ is the ideal.</p></div>
 
 <h2>Reading the ROC curve</h2>
 <div class="grid cols-2">
 <div class="card"><h4>The diagonal</h4><p>The 45° line = random guessing (no learning). Your curve should bow <b>above</b> it, towards the top-left.</p></div>
-<div class="card"><h4>AUC — area under the curve</h4><p>0.5 = random; 1.0 = perfect. Higher AUC = better model. AUC lets you compare two models when the curves are hard to read by eye.</p></div>
+<div class="card"><h4>AUC: area under the curve</h4><p>0.5 = random; 1.0 = perfect. Higher AUC = better model. AUC lets you compare two models when the curves are hard to read by eye.</p></div>
 </div>
 
 <h2>Building the ROC curve & choosing a threshold</h2>
@@ -134,7 +134,7 @@ $$F_1=\\frac{2PR}{P+R}$$</div>
 <li>Pick the threshold whose point is nearest the top-left (highest TPR, lowest FPR).</li>
 </ol>
 
-<div class="callout intuition" data-icon="🧠"><div class="callout-title">Why move off 0.5?</div><p>0.5 is just a default. A higher threshold $T$ on $\\theta^T x$ raises precision (fewer false positives); a lower $T$ raises recall (fewer false negatives). The ROC curve helps you pick $T$ for your problem with justification — or compare classifiers via AUC.</p></div>
+<div class="callout intuition" data-icon="🧠"><div class="callout-title">Why move off 0.5?</div><p>0.5 is just a default. A higher threshold $T$ on $\\theta^T x$ raises precision (fewer false positives); a lower $T$ raises recall (fewer false negatives). The ROC curve helps you pick $T$ for your problem with justification, or compare classifiers via AUC.</p></div>
 `
     },
     {
@@ -157,14 +157,14 @@ $$F_1=\\frac{2PR}{P+R}$$</div>
     }
   ],
   cheatsheet: `
-<p class="lead">Logistic Regression & Classification Evaluation — one-page recall.</p>
+<p class="lead">Logistic Regression &amp; Classification Evaluation: one-page recall.</p>
 <div class="grid cols-2">
 <div class="card"><h4>Sigmoid</h4><p>$h_\\theta(x)=\\dfrac{1}{1+e^{-\\theta^T x}}$ → probability of the positive class. Threshold 0.5 by default.</p></div>
 <div class="card"><h4>Log-odds</h4><p>$\\theta^T x=\\ln\\frac{p}{1-p}$. Logistic regression is linear in the log-odds; boundary at $\\theta^T x=0$.</p></div>
 <div class="card"><h4>Cost</h4><p>Cross-entropy / log loss (convex). MSE would be non-convex on the sigmoid.</p></div>
 <div class="card"><h4>Gradient</h4><p>Same form as linear regression: $\\theta_j\\leftarrow\\theta_j-\\alpha\\frac1n\\sum(\\hat y-y)x_j$, but $h_\\theta$ is the sigmoid.</p></div>
 <div class="card"><h4>Coefficients</h4><p>Odds multiplied by $e^{\\theta_j}$ per unit feature change. Positive = odds up; negative = odds down.</p></div>
-<div class="card"><h4>Confusion matrix</h4><p>TP, TN, FP, FN. Accuracy $=\\frac{TP+TN}{\\text{all}}$ — unsafe on imbalanced data.</p></div>
+<div class="card"><h4>Confusion matrix</h4><p>TP, TN, FP, FN. Accuracy $=\\frac{TP+TN}{\\text{all}}$, unsafe on imbalanced data.</p></div>
 <div class="card"><h4>Precision / recall / F1</h4><p>P $=\\frac{TP}{TP+FP}$, R $=\\frac{TP}{TP+FN}$, F1 $=\\frac{2PR}{P+R}$. F1 for imbalance.</p></div>
 <div class="card"><h4>ROC / AUC</h4><p>TPR vs FPR; aim top-left. AUC 0.5 random, 1.0 perfect. Use for threshold choice & model comparison.</p></div>
 </div>
@@ -190,8 +190,8 @@ $$F_1=\\frac{2PR}{P+R}$$</div>
     { q: 'A logistic coefficient of −0.45 means a unit increase in that feature:', opts: ['Adds 0.45 to the probability', 'Multiplies the odds by e^(−0.45) ≈ 0.64', 'Has no effect', 'Sets the probability to 0'], answer: 1, explain: 'Coefficients act on the log-odds; exponentiating gives the odds multiplier, here ~0.64 (about a 36% drop in odds).' },
     { q: 'On a dataset with 99% positives, predicting "positive" always gives ~99% accuracy. The lesson is:', opts: ['Accuracy is always best', 'Accuracy is misleading on imbalanced data', 'Recall equals accuracy', 'The model is excellent'], answer: 1, explain: 'High accuracy can hide a model that learned nothing. Use precision/recall/F1/AUC for imbalanced data.' },
     { q: 'Recall is high when the model has few:', opts: ['False positives', 'False negatives', 'True positives', 'True negatives'], answer: 1, explain: 'Recall = TP/(TP+FN); minimising false negatives (missed positives) raises recall.' },
-    { q: 'On an ROC curve, the ideal model sits at:', opts: ['Bottom-right (1,0)', 'Top-left (0,1): high TPR, low FPR', 'On the diagonal', 'The origin'], answer: 1, explain: 'We want maximal true-positive rate with minimal false-positive rate — the top-left corner.' },
-    { q: 'An AUC of 0.5 indicates:', opts: ['A perfect classifier', 'A random-guessing classifier', 'An overfit classifier', 'A data leak'], answer: 1, explain: 'AUC 0.5 is the diagonal — no better than chance. 1.0 is perfect; higher is better.' },
+    { q: 'On an ROC curve, the ideal model sits at:', opts: ['Bottom-right (1,0)', 'Top-left (0,1): high TPR, low FPR', 'On the diagonal', 'The origin'], answer: 1, explain: 'We want maximal true-positive rate with minimal false-positive rate, the top-left corner.' },
+    { q: 'An AUC of 0.5 indicates:', opts: ['A perfect classifier', 'A random-guessing classifier', 'An overfit classifier', 'A data leak'], answer: 1, explain: 'AUC 0.5 is the diagonal, no better than chance. 1.0 is perfect; higher is better.' },
     { q: 'For a 4-class problem, One-vs-One trains how many classifiers?', opts: ['4', '6', '8', '16'], answer: 1, explain: 'OvO uses $\\binom{N}{2}=N(N-1)/2$; for N=4 that is 6. OvR would use 4.' }
   ]
 });

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISM Visual Formula Sheet</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; }
+        .katex-display { margin: 0.5em 0 !important; }
+        .card { transition: all 0.2s ease; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .flow-arrow { position: relative; }
+        .flow-arrow::after {
+            content: '↓'; position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
+            font-size: 1.2rem; color: #94a3b8; font-weight: bold;
+        }
+        @media (min-width: 768px) {
+            .md\:flow-arrow-right::after {
+                content: '→'; bottom: auto; right: -24px; left: auto; top: 50%; transform: translateY(-50%);
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8">
+
+    <header class="max-w-6xl mx-auto mb-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-4 tracking-tight">ISM Visual Formula Sheet</h1>
+        <p class="text-slate-500 font-medium">Introduction to Statistical Methods — One-Page Syllabus Revision</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto space-y-8">
+
+        <!-- MIDSEM ROADMAP -->
+        <section class="bg-slate-900 rounded-2xl shadow-sm border border-slate-700 p-6 text-white">
+            <h2 class="text-lg font-black text-amber-400 mb-4 flex items-center gap-2 uppercase tracking-widest text-center justify-center">
+                🗺️ Midsem Roadmap
+            </h2>
+            <div class="flex flex-col md:flex-row justify-between gap-4 text-sm">
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-600 flex-1">
+                    <h3 class="font-bold text-blue-400 border-b border-slate-700 pb-1 mb-2">1. Descriptive</h3>
+                    <ul class="text-slate-300 space-y-1 text-xs">
+                        <li>• Central Tendency</li>
+                        <li>• Dispersion / Variability</li>
+                        <li>• Shape (Skewness)</li>
+                    </ul>
+                </div>
+                <div class="hidden md:flex items-center text-slate-500">→</div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-600 flex-1">
+                    <h3 class="font-bold text-purple-400 border-b border-slate-700 pb-1 mb-2">2. Probability</h3>
+                    <ul class="text-slate-300 space-y-1 text-xs">
+                        <li>• Set Theory & Laws</li>
+                        <li>• Conditional & Total</li>
+                        <li>• Bayes Theorem</li>
+                    </ul>
+                </div>
+                <div class="hidden md:flex items-center text-slate-500">→</div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-600 flex-1">
+                    <h3 class="font-bold text-cyan-400 border-b border-slate-700 pb-1 mb-2">3. Distributions</h3>
+                    <ul class="text-slate-300 space-y-1 text-xs">
+                        <li>• Bernoulli & Binomial</li>
+                        <li>• Poisson</li>
+                        <li>• Normal (Continuous)</li>
+                    </ul>
+                </div>
+                <div class="hidden md:flex items-center text-slate-500">→</div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-600 flex-1">
+                    <h3 class="font-bold text-orange-400 border-b border-slate-700 pb-1 mb-2">4. Inference</h3>
+                    <ul class="text-slate-300 space-y-1 text-xs">
+                        <li>• Sampling & CLT</li>
+                        <li>• Confidence Intervals</li>
+                        <li>• Hypothesis Testing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1 & 2: Quick Reference & Data Types -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">1</span> High-Yield Topics
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs mb-4 flex-grow">
+                    <div class="bg-blue-50 border border-blue-200 p-2 rounded text-center font-bold text-blue-800">Mean / Med / Mode</div>
+                    <div class="bg-blue-50 border border-blue-200 p-2 rounded text-center font-bold text-blue-800">Variance & SD</div>
+                    <div class="bg-purple-50 border border-purple-200 p-2 rounded text-center font-bold text-purple-800">Conditional Prob</div>
+                    <div class="bg-rose-50 border border-rose-200 p-2 rounded text-center font-bold text-rose-800">Bayes Theorem</div>
+                    <div class="bg-cyan-50 border border-cyan-200 p-2 rounded text-center font-bold text-cyan-800">Binomial & Poisson</div>
+                    <div class="bg-orange-50 border border-orange-200 p-2 rounded text-center font-bold text-orange-800">Confidence Intervals</div>
+                </div>
+                
+                <div class="border-t border-slate-100 pt-4 mt-auto">
+                    <h3 class="text-sm font-bold text-slate-700 mb-2 text-center">Parameter vs. Statistic</h3>
+                    <table class="w-full text-sm text-center border-collapse">
+                        <tr class="bg-slate-50 font-semibold text-slate-600"><td class="p-1 border">Measure</td><td class="p-1 border text-blue-700">Population (Parameter)</td><td class="p-1 border text-orange-700">Sample (Statistic)</td></tr>
+                        <tr><td class="p-1 border font-medium">Mean</td><td class="p-1 border">$\mu$ (Mu)</td><td class="p-1 border">$\bar{x}$ (x-bar)</td></tr>
+                        <tr><td class="p-1 border font-medium">Std Dev</td><td class="p-1 border">$\sigma$ (Sigma)</td><td class="p-1 border">$s$</td></tr>
+                        <tr><td class="p-1 border font-medium">Proportion</td><td class="p-1 border">$P$ or $\pi$</td><td class="p-1 border">$\hat{p}$ (p-hat)</td></tr>
+                    </table>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">2</span> Data Types
+                </h2>
+                <div class="grid grid-cols-2 gap-4 h-full pb-4">
+                    <div class="card bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex flex-col justify-center">
+                        <h3 class="font-bold text-emerald-800 mb-2">Quantitative (Numeric)</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="bg-white p-2 rounded border border-emerald-100 shadow-sm"><span class="font-semibold">Discrete:</span> Countable (e.g., # of students)</div>
+                            <div class="bg-white p-2 rounded border border-emerald-100 shadow-sm"><span class="font-semibold">Continuous:</span> Measurable (e.g., Height, Time)</div>
+                        </div>
+                    </div>
+                    <div class="card bg-amber-50 border border-amber-200 p-4 rounded-xl flex flex-col justify-center">
+                        <h3 class="font-bold text-amber-800 mb-2">Qualitative (Categorical)</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="bg-white p-2 rounded border border-amber-100 shadow-sm"><span class="font-semibold">Nominal:</span> No order (e.g., Colors, Gender)</div>
+                            <div class="bg-white p-2 rounded border border-amber-100 shadow-sm"><span class="font-semibold">Ordinal:</span> Ordered (e.g., Ranks, Ratings)</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 3: Levels of Measurement -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 overflow-x-auto">
+            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">3</span> Levels of Measurement
+            </h2>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-600 text-sm uppercase tracking-wider">
+                        <th class="p-3 border-b">Scale</th>
+                        <th class="p-3 border-b text-center">Classify</th>
+                        <th class="p-3 border-b text-center">Order</th>
+                        <th class="p-3 border-b text-center">Equal Intervals</th>
+                        <th class="p-3 border-b text-center">True Zero</th>
+                        <th class="p-3 border-b">Example</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 border-b font-medium">Nominal</td>
+                        <td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-red-400">❌</td><td class="p-3 border-b text-center text-red-400">❌</td><td class="p-3 border-b text-center text-red-400">❌</td>
+                        <td class="p-3 border-b text-slate-500">Zip Codes, Eye Color</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 border-b font-medium">Ordinal</td>
+                        <td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-red-400">❌</td><td class="p-3 border-b text-center text-red-400">❌</td>
+                        <td class="p-3 border-b text-slate-500">Grades (A,B,C), Ranks</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 border-b font-medium">Interval</td>
+                        <td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-red-400">❌</td>
+                        <td class="p-3 border-b text-slate-500">Temperature (°C), IQ</td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 border-b font-medium">Ratio</td>
+                        <td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-green-500">✅</td><td class="p-3 border-b text-center text-green-500">✅</td>
+                        <td class="p-3 border-b text-slate-500">Height, Weight, Age</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 4 & 6: Central Tendency & Variability -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">4</span> Central Tendency
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="card bg-slate-50 p-4 rounded-xl text-center border border-slate-200">
+                        <h3 class="font-bold text-slate-700 mb-2">Mean</h3>
+                        <div class="text-xl">$$\bar{x} = \frac{\sum x}{n}$$</div>
+                        <p class="text-[10px] text-slate-500 mt-2 bg-white rounded border py-1 shadow-sm font-semibold">Sensitive to outliers</p>
+                    </div>
+                    <div class="card bg-slate-50 p-4 rounded-xl text-center border border-slate-200">
+                        <h3 class="font-bold text-slate-700 mb-2">Median</h3>
+                        <div class="font-semibold text-lg text-slate-800 py-3">Middle Obs.</div>
+                        <p class="text-[10px] text-slate-500 bg-white rounded border py-1 shadow-sm font-semibold">Robust to outliers</p>
+                    </div>
+                    <div class="card bg-slate-50 p-4 rounded-xl text-center border border-slate-200">
+                        <h3 class="font-bold text-slate-700 mb-2">Mode</h3>
+                        <div class="font-semibold text-lg text-slate-800 py-3">Most Frequent</div>
+                        <p class="text-[10px] text-slate-500 bg-white rounded border py-1 shadow-sm font-semibold">Highest peak</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                    <div class="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-3">
+                        <h3 class="text-xs uppercase font-bold text-blue-800 text-center mb-2">Decision Guide</h3>
+                        <table class="w-full text-xs text-left">
+                            <tr class="border-b border-blue-200"><th class="py-1 text-slate-600">Data Scenario</th><th class="py-1 text-blue-700">Best Measure</th></tr>
+                            <tr class="border-b border-blue-100"><td class="py-1">Symmetric, No Outliers</td><td class="py-1 font-bold text-slate-800">Mean</td></tr>
+                            <tr class="border-b border-blue-100"><td class="py-1">Skewed / Has Outliers</td><td class="py-1 font-bold text-slate-800">Median</td></tr>
+                            <tr><td class="py-1">Categorical Data</td><td class="py-1 font-bold text-slate-800">Mode</td></tr>
+                        </table>
+                    </div>
+                    <div class="flex-1 bg-purple-50 border border-purple-200 rounded-xl p-3 flex flex-col justify-center text-center">
+                        <h3 class="text-xs uppercase font-bold text-purple-800 mb-2">Empirical Relationship</h3>
+                        <div class="text-sm font-semibold text-purple-900 bg-white p-2 rounded shadow-sm border border-purple-100">
+                            Mode = 3(Med) - 2(Mean)
+                        </div>
+                        <div class="text-[10px] text-purple-600 mt-2 font-mono">Mean - Mode = 3(Mean - Med)</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">6</span> Variability & Dispersion
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div class="card bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col items-center justify-center">
+                        <h3 class="font-semibold text-sm text-slate-700">Range</h3>
+                        <div class="text-sm mt-1">$$Max - Min$$</div>
+                    </div>
+                    <div class="card bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col items-center justify-center col-span-2 sm:col-span-1">
+                        <h3 class="font-semibold text-sm text-slate-700">IQR</h3>
+                        <div class="text-sm mt-1">$$Q_3 - Q_1$$</div>
+                    </div>
+                    <div class="card bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col items-center justify-center">
+                        <h3 class="font-semibold text-sm text-slate-700">Variance (Pop)</h3>
+                        <div class="text-sm mt-1">$$\sigma^2=\frac{\sum (x-\mu)^2}{N}$$</div>
+                    </div>
+                    <div class="card bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col items-center justify-center">
+                        <h3 class="font-semibold text-sm text-slate-700">Std Dev</h3>
+                        <div class="text-sm mt-1">$$\sigma=\sqrt{\sigma^2}$$</div>
+                    </div>
+                    <div class="card bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col items-center justify-center">
+                        <h3 class="font-semibold text-sm text-slate-700">Quartile Dev</h3>
+                        <div class="text-sm mt-1">$$\frac{Q_3-Q_1}{2}$$</div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
+                    <h3 class="text-xs uppercase font-bold text-slate-600 mb-2">Quartile Positions (Ordered Data)</h3>
+                    <div class="flex justify-around items-center">
+                        <div>
+                            <div class="font-bold text-slate-800">$Q_1$</div>
+                            <div class="text-xs text-slate-500 mt-1">$\frac{n+1}{4}$ th</div>
+                        </div>
+                        <div class="h-8 w-px bg-slate-300"></div>
+                        <div>
+                            <div class="font-bold text-slate-800">$Q_2$ (Med)</div>
+                            <div class="text-xs text-slate-500 mt-1">$\frac{n+1}{2}$ th</div>
+                        </div>
+                        <div class="h-8 w-px bg-slate-300"></div>
+                        <div>
+                            <div class="font-bold text-slate-800">$Q_3$</div>
+                            <div class="text-xs text-slate-500 mt-1">$\frac{3(n+1)}{4}$ th</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 5 & 7: Visualizing Shape & Position -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">5</span> Skewness Visualization
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Negative Skew -->
+                    <div class="text-center">
+                        <h3 class="font-bold text-red-600 mb-1 text-sm">Negative (Left)</h3>
+                        <p class="text-[10px] text-slate-600 mb-2 font-mono tracking-tighter">Mean &lt; Med &lt; Mode</p>
+                        <svg viewBox="0 0 200 100" class="w-full h-24 drop-shadow-sm">
+                            <path d="M 0 90 C 80 90, 120 10, 160 10 C 180 10, 190 90, 200 90" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="3"/>
+                            <line x1="120" y1="35" x2="120" y2="90" stroke="#7f1d1d" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="120" y="30" font-size="8" fill="#7f1d1d" text-anchor="middle">Mean</text>
+                            <line x1="145" y1="18" x2="145" y2="90" stroke="#991b1b" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="145" y="13" font-size="8" fill="#991b1b" text-anchor="middle">Med</text>
+                            <line x1="160" y1="10" x2="160" y2="90" stroke="#b91c1c" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="160" y="8" font-size="8" fill="#b91c1c" text-anchor="start">Mode</text>
+                        </svg>
+                    </div>
+                    <!-- Symmetric -->
+                    <div class="text-center">
+                        <h3 class="font-bold text-blue-600 mb-1 text-sm">Symmetric</h3>
+                        <p class="text-[10px] text-slate-600 mb-2 font-mono tracking-tighter">Mean = Med = Mode</p>
+                        <svg viewBox="0 0 200 100" class="w-full h-24 drop-shadow-sm">
+                            <path d="M 0 90 C 40 90, 60 10, 100 10 C 140 10, 160 90, 200 90" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="3"/>
+                            <line x1="100" y1="10" x2="100" y2="90" stroke="#1d4ed8" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="100" y="8" font-size="8" fill="#1d4ed8" text-anchor="middle">Mean/Med/Mode</text>
+                        </svg>
+                    </div>
+                    <!-- Positive Skew -->
+                    <div class="text-center">
+                        <h3 class="font-bold text-green-600 mb-1 text-sm">Positive (Right)</h3>
+                        <p class="text-[10px] text-slate-600 mb-2 font-mono tracking-tighter">Mean &gt; Med &gt; Mode</p>
+                        <svg viewBox="0 0 200 100" class="w-full h-24 drop-shadow-sm">
+                            <path d="M 0 90 C 10 90, 20 10, 40 10 C 80 10, 120 90, 200 90" fill="rgba(34, 197, 94, 0.15)" stroke="#22c55e" stroke-width="3"/>
+                            <line x1="40" y1="10" x2="40" y2="90" stroke="#14532d" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="40" y="8" font-size="8" fill="#14532d" text-anchor="end">Mode</text>
+                            <line x1="55" y1="18" x2="55" y2="90" stroke="#166534" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="55" y="13" font-size="8" fill="#166534" text-anchor="middle">Med</text>
+                            <line x1="80" y1="35" x2="80" y2="90" stroke="#15803d" stroke-dasharray="3" stroke-width="1.5"/>
+                            <text x="80" y="30" font-size="8" fill="#15803d" text-anchor="middle">Mean</text>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">7</span> Boxplot & Outliers
+                </h2>
+                <div class="flex flex-col items-center justify-center p-2">
+                    <svg viewBox="0 0 500 120" class="w-full max-w-lg">
+                        <!-- Axis -->
+                        <line x1="0" y1="90" x2="500" y2="90" stroke="#cbd5e1" stroke-width="2"/>
+                        <!-- Whisker left -->
+                        <line x1="100" y1="50" x2="180" y2="50" stroke="#475569" stroke-width="2"/>
+                        <line x1="100" y1="35" x2="100" y2="65" stroke="#475569" stroke-width="3"/>
+                        <text x="100" y="25" font-size="12" fill="#475569" text-anchor="middle">Min</text>
+                        
+                        <!-- Box -->
+                        <rect x="180" y="30" width="140" height="40" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                        <text x="180" y="25" font-size="12" fill="#4f46e5" text-anchor="middle">Q1</text>
+                        <text x="320" y="25" font-size="12" fill="#4f46e5" text-anchor="middle">Q3</text>
+                        
+                        <!-- Median -->
+                        <line x1="240" y1="30" x2="240" y2="70" stroke="#4f46e5" stroke-width="4"/>
+                        <text x="240" y="25" font-size="12" fill="#4f46e5" text-anchor="middle" font-weight="bold">Median</text>
+                        
+                        <!-- Whisker right -->
+                        <line x1="320" y1="50" x2="420" y2="50" stroke="#475569" stroke-width="2"/>
+                        <line x1="420" y1="35" x2="420" y2="65" stroke="#475569" stroke-width="3"/>
+                        <text x="420" y="25" font-size="12" fill="#475569" text-anchor="middle">Max</text>
+                        
+                        <!-- IQR Brace -->
+                        <path d="M 180 80 Q 250 100 320 80" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4"/>
+                        <text x="250" y="110" font-size="12" fill="#6366f1" text-anchor="middle">IQR = Q3 - Q1</text>
+
+                        <!-- Outliers -->
+                        <circle cx="40" cy="50" r="4" fill="#ef4444"/>
+                        <circle cx="60" cy="50" r="4" fill="#ef4444"/>
+                        <text x="50" y="25" font-size="12" fill="#ef4444" text-anchor="middle">Outliers</text>
+                        <circle cx="470" cy="50" r="4" fill="#ef4444"/>
+                    </svg>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mt-6 w-full">
+                        <div class="flex-1 bg-red-50 text-red-800 px-3 py-2 rounded-lg border border-red-200 text-sm text-center">
+                            Lower &lt; $Q_1 - 1.5(\text{IQR})$
+                        </div>
+                        <div class="flex-1 bg-red-50 text-red-800 px-3 py-2 rounded-lg border border-red-200 text-sm text-center">
+                            Upper &gt; $Q_3 + 1.5(\text{IQR})$
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 8 & 9: Probability Basics & Laws -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:col-span-1">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-sm">8</span> Sets & Terms
+                </h2>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-3 bg-slate-50 p-2 rounded border border-slate-100">
+                        <svg viewBox="0 0 100 60" class="w-12 h-8 flex-shrink-0">
+                            <circle cx="35" cy="30" r="20" fill="rgba(168, 85, 247, 0.4)" stroke="#9333ea"/>
+                            <circle cx="65" cy="30" r="20" fill="rgba(168, 85, 247, 0.4)" stroke="#9333ea"/>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-bold">Union $A \cup B$</div>
+                            <div class="text-[10px] text-slate-500">A or B (or both)</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-slate-50 p-2 rounded border border-slate-100">
+                        <svg viewBox="0 0 100 60" class="w-12 h-8 flex-shrink-0">
+                            <clipPath id="intersect">
+                                <circle cx="35" cy="30" r="20" />
+                            </clipPath>
+                            <circle cx="35" cy="30" r="20" fill="none" stroke="#9333ea"/>
+                            <circle cx="65" cy="30" r="20" fill="none" stroke="#9333ea"/>
+                            <circle cx="65" cy="30" r="20" fill="rgba(168, 85, 247, 0.6)" clip-path="url(#intersect)"/>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-bold">Intersect $A \cap B$</div>
+                            <div class="text-[10px] text-slate-500">A and B (together)</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-slate-50 p-2 rounded border border-slate-100">
+                        <svg viewBox="0 0 100 60" class="w-12 h-8 flex-shrink-0">
+                            <rect x="5" y="5" width="90" height="50" fill="rgba(168, 85, 247, 0.3)" stroke="#9333ea" rx="4"/>
+                            <circle cx="50" cy="30" r="18" fill="#fff" stroke="#9333ea"/>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-bold">Compl. $A'$</div>
+                            <div class="text-[10px] text-slate-500">Not A ($1 - P(A)$)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="w-full text-xs text-left mt-4 border-t border-slate-100 pt-3">
+                    <tr><td class="py-1 font-bold text-purple-800">Conditional ($|$)</td><td class="py-1 text-slate-600">Prob of A <b class="text-slate-800">given</b> B</td></tr>
+                </table>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:col-span-2">
+                <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-sm">9</span> Probability Laws
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <h3 class="font-bold text-red-800 mb-2 border-b border-red-200 pb-1">Mutually Exclusive</h3>
+                        <p class="text-[10px] text-red-700 mb-2 font-medium">Cannot happen at the same time.</p>
+                        <div class="flex justify-center mb-2">
+                            <svg viewBox="0 0 100 40" class="w-24 h-10">
+                                <circle cx="30" cy="20" r="15" fill="none" stroke="#dc2626" stroke-width="2"/>
+                                <circle cx="70" cy="20" r="15" fill="none" stroke="#dc2626" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="bg-white px-2 py-1 rounded text-center text-sm shadow-sm text-red-900 border border-red-100 font-bold">
+                            $P(A \cap B) = 0$
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                        <h3 class="font-bold text-green-800 mb-2 border-b border-green-200 pb-1">Independent</h3>
+                        <p class="text-[10px] text-green-700 mb-2 font-medium">One event doesn't affect the other.</p>
+                        <div class="flex justify-center items-center h-10 mb-2 text-green-700 text-[10px] text-center font-bold uppercase tracking-wider">
+                            "With Replacement"
+                        </div>
+                        <div class="bg-white px-2 py-1 rounded text-center text-sm shadow-sm text-green-900 border border-green-100 font-bold">
+                            $P(A \cap B) = P(A)P(B)$
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center text-[10px] text-purple-600 font-bold mb-6 bg-purple-50 py-2 rounded uppercase tracking-wider">
+                    ⚠️ Mutually exclusive events CANNOT be independent (unless prob is 0).
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="card bg-purple-50 p-3 rounded-xl border border-purple-100 flex flex-col justify-center">
+                        <h3 class="font-bold text-purple-800 mb-1 text-xs uppercase tracking-wide">Addition Rule (Union)</h3>
+                        <div class="text-sm bg-white p-2 rounded shadow-sm text-center">$$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$</div>
+                    </div>
+                    <div class="card bg-purple-50 p-3 rounded-xl border border-purple-100 flex flex-col justify-center">
+                        <h3 class="font-bold text-purple-800 mb-1 text-xs uppercase tracking-wide">Conditional Prob</h3>
+                        <div class="text-sm bg-white p-2 rounded shadow-sm text-center">$$P(B|A) = \frac{P(A \cap B)}{P(A)}$$</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 10: Bayes & Total Probability -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                <span class="bg-rose-100 text-rose-700 px-2 py-1 rounded text-sm">10</span> Total Probability & Bayes Theorem
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                
+                <!-- Total Probability Side -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 h-full flex flex-col justify-center">
+                    <h3 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-1 text-sm uppercase tracking-wider text-center">Total Probability</h3>
+                    <p class="text-[10px] text-slate-500 mb-4 text-center">Used to find the total probability of an event B that depends on mutually exclusive events $A_i$.</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                        <svg viewBox="0 0 100 60" class="w-20 h-16 drop-shadow-sm">
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                                </marker>
+                            </defs>
+                            <text x="10" y="15" font-size="14" fill="#475569" font-weight="bold">A₁</text>
+                            <text x="10" y="55" font-size="14" fill="#475569" font-weight="bold">A₂</text>
+                            <line x1="25" y1="15" x2="65" y2="30" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+                            <line x1="25" y1="50" x2="65" y2="35" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+                            <circle cx="80" cy="32" r="14" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+                            <text x="80" y="37" font-size="14" fill="#be123c" text-anchor="middle" font-weight="bold">B</text>
+                        </svg>
+                        <div class="bg-white p-3 rounded shadow-sm text-sm border border-slate-100 font-semibold text-slate-800">
+                            $$P(B) = \sum P(B|A_i)P(A_i)$$
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bayes Side -->
+                <div class="h-full flex flex-col">
+                    <div class="grid grid-cols-2 gap-2 text-sm mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center"><span class="font-bold text-slate-600">Prior</span> <span class="bg-white px-2 py-1 rounded shadow-sm">$P(A)$</span></div>
+                        <div class="flex justify-between items-center"><span class="font-bold text-slate-600">Likelihood</span> <span class="bg-white px-2 py-1 rounded shadow-sm">$P(B|A)$</span></div>
+                        <div class="flex justify-between items-center"><span class="font-bold text-slate-600">Evidence</span> <span class="bg-white px-2 py-1 rounded shadow-sm">$P(B)$</span></div>
+                        <div class="flex justify-between items-center"><span class="font-bold text-rose-600">Posterior</span> <span class="bg-rose-100 text-rose-800 px-2 py-1 rounded shadow-sm font-bold">$P(A|B)$</span></div>
+                    </div>
+
+                    <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 flex-grow flex items-center justify-center">
+                        <div class="text-lg">$$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 11 & 12: Expectation & Distributions -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                <span class="bg-cyan-100 text-cyan-700 px-2 py-1 rounded text-sm">11 & 12</span> Random Variables & Distributions
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <!-- Expectation Block -->
+                <div class="md:col-span-1 bg-slate-800 text-white p-4 rounded-xl shadow-inner border border-slate-700 flex flex-col justify-center">
+                    <h3 class="font-bold text-cyan-400 mb-4 border-b border-slate-600 pb-1 text-sm uppercase tracking-wider">Expected Value</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-widest">Expectation / Mean</span>
+                            <div class="bg-slate-900 px-2 py-1 text-sm rounded mt-1">$$E(X) = \sum x \cdot P(x)$$</div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-widest">Variance Rules</span>
+                            <div class="bg-slate-900 px-2 py-1 text-sm rounded mt-1">$$Var(X) = E(X^2) - [E(X)]^2$$</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selection Guide Block -->
+                <div class="md:col-span-2 bg-cyan-50 border border-cyan-200 rounded-xl p-4 flex flex-col justify-center">
+                    <h3 class="font-bold text-cyan-800 text-sm uppercase tracking-wider mb-3">Distribution Selection Guide</h3>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="bg-white p-2 rounded border border-cyan-100 shadow-sm flex items-center gap-2">
+                            <span class="bg-cyan-100 text-cyan-800 font-bold px-2 py-1 rounded text-xs">Bernoulli</span>
+                            <span class="text-xs text-slate-600">1 Trial Success/Fail</span>
+                        </div>
+                        <div class="bg-white p-2 rounded border border-cyan-100 shadow-sm flex items-center gap-2">
+                            <span class="bg-cyan-100 text-cyan-800 font-bold px-2 py-1 rounded text-xs">Binomial</span>
+                            <span class="text-xs text-slate-600">$n$ Trials Success/Fail</span>
+                        </div>
+                        <div class="bg-white p-2 rounded border border-cyan-100 shadow-sm flex items-center gap-2">
+                            <span class="bg-cyan-100 text-cyan-800 font-bold px-2 py-1 rounded text-xs">Poisson</span>
+                            <span class="text-xs text-slate-600">Rare Events over Time</span>
+                        </div>
+                        <div class="bg-white p-2 rounded border border-cyan-100 shadow-sm flex items-center gap-2">
+                            <span class="bg-cyan-100 text-cyan-800 font-bold px-2 py-1 rounded text-xs">Normal</span>
+                            <span class="text-xs text-slate-600">Continuous Data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Binomial -->
+                <div class="card bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col">
+                    <h3 class="font-bold text-cyan-800 text-center mb-2 border-b border-cyan-100 pb-1">Binomial</h3>
+                    <ul class="text-[10px] text-slate-500 mb-2 bg-white p-1 rounded border border-slate-100 text-center leading-tight">
+                        <li>1. Fixed $n$</li>
+                        <li>2. Independent trials</li>
+                        <li>3. Constant $p$</li>
+                        <li>4. Two outcomes (S/F)</li>
+                    </ul>
+                    <svg viewBox="0 0 100 30" class="w-full h-8 mb-2">
+                        <line x1="10" y1="25" x2="90" y2="25" stroke="#94a3b8"/>
+                        <rect x="20" y="15" width="8" height="10" fill="#06b6d4" />
+                        <rect x="35" y="5" width="8" height="20" fill="#06b6d4" />
+                        <rect x="50" y="0" width="8" height="25" fill="#06b6d4" />
+                        <rect x="65" y="10" width="8" height="15" fill="#06b6d4" />
+                        <rect x="80" y="20" width="8" height="5" fill="#06b6d4" />
+                    </svg>
+                    <div class="text-xs space-y-2 mt-auto">
+                        <div class="bg-white px-2 py-1 rounded shadow-sm text-center">$$P(x) = \binom{n}{x} p^x q^{n-x}$$</div>
+                        <div class="flex justify-between px-1">
+                            <span>Mean: $np$</span>
+                            <span>Var: $npq$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Poisson -->
+                <div class="card bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col">
+                    <h3 class="font-bold text-cyan-800 text-center mb-2 border-b border-cyan-100 pb-1">Poisson</h3>
+                    <div class="text-[10px] text-orange-600 font-bold mb-2 bg-orange-50 p-1 rounded border border-orange-100 text-center leading-tight h-[42px] flex items-center justify-center">
+                        Approx Binomial if:<br>$n$ is large, $p$ is small.<br>Let $\lambda = np$
+                    </div>
+                    <svg viewBox="0 0 100 30" class="w-full h-8 mb-2">
+                        <line x1="10" y1="25" x2="90" y2="25" stroke="#94a3b8"/>
+                        <rect x="15" y="0" width="6" height="25" fill="#06b6d4" />
+                        <rect x="25" y="5" width="6" height="20" fill="#06b6d4" />
+                        <rect x="35" y="10" width="6" height="15" fill="#06b6d4" />
+                        <rect x="45" y="15" width="6" height="10" fill="#06b6d4" />
+                        <rect x="55" y="20" width="6" height="5" fill="#06b6d4" />
+                        <rect x="65" y="23" width="6" height="2" fill="#06b6d4" />
+                    </svg>
+                    <div class="text-xs space-y-2 mt-auto">
+                        <div class="bg-white px-2 py-1 rounded shadow-sm text-center">$$P(x) = \frac{e^{-\lambda}\lambda^x}{x!}$$</div>
+                        <div class="flex justify-between px-1">
+                            <span>Mean: $\lambda$</span>
+                            <span>Var: $\lambda$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Normal -->
+                <div class="card bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col">
+                    <h3 class="font-bold text-cyan-800 text-center mb-2 border-b border-cyan-100 pb-1">Normal</h3>
+                    <svg viewBox="0 0 200 100" class="w-full h-[76px] mb-2 drop-shadow-sm">
+                        <!-- Bell curve -->
+                        <path d="M 0 85 C 50 85, 70 10, 100 10 C 130 10, 150 85, 200 85" fill="rgba(6, 182, 212, 0.15)" stroke="#06b6d4" stroke-width="2"/>
+                        <!-- Sigma Lines -->
+                        <line x1="100" y1="10" x2="100" y2="85" stroke="#0891b2" stroke-dasharray="2" stroke-width="1.5"/>
+                        <line x1="70" y1="40" x2="70" y2="85" stroke="#0891b2" stroke-dasharray="2" stroke-width="0.8"/>
+                        <line x1="130" y1="40" x2="130" y2="85" stroke="#0891b2" stroke-dasharray="2" stroke-width="0.8"/>
+                        <line x1="40" y1="75" x2="40" y2="85" stroke="#0891b2" stroke-dasharray="2" stroke-width="0.5"/>
+                        <line x1="160" y1="75" x2="160" y2="85" stroke="#0891b2" stroke-dasharray="2" stroke-width="0.5"/>
+                        
+                        <!-- Percentages -->
+                        <text x="85" y="75" font-size="10" text-anchor="middle" fill="#0891b2" font-weight="bold">34%</text>
+                        <text x="115" y="75" font-size="10" text-anchor="middle" fill="#0891b2" font-weight="bold">34%</text>
+                        <text x="55" y="80" font-size="8" text-anchor="middle" fill="#0891b2">13.5%</text>
+                        <text x="145" y="80" font-size="8" text-anchor="middle" fill="#0891b2">13.5%</text>
+                        <text x="25" y="82" font-size="6" text-anchor="middle" fill="#0891b2">2.35%</text>
+                        <text x="175" y="82" font-size="6" text-anchor="middle" fill="#0891b2">2.35%</text>
+                        
+                        <!-- Axes -->
+                        <text x="100" y="95" font-size="8" text-anchor="middle" fill="#475569">$\mu$</text>
+                        <text x="70" y="95" font-size="8" text-anchor="middle" fill="#475569">-1$\sigma$</text>
+                        <text x="130" y="95" font-size="8" text-anchor="middle" fill="#475569">+1$\sigma$</text>
+                    </svg>
+                    <div class="text-xs space-y-2 mt-auto">
+                        <div class="bg-white px-2 py-1 rounded shadow-sm text-center font-bold text-cyan-700 tracking-wider text-[10px]">68% - 95% - 99.7%</div>
+                        <div class="bg-white px-2 py-1 rounded shadow-sm text-center">$$Z = \frac{x - \mu}{\sigma}$$</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 13, 14, 15, 16: Inference & Testing -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-sm">13</span> Sampling
+                </h2>
+                <div class="mt-auto border border-slate-200 rounded-xl overflow-hidden">
+                    <h3 class="text-[10px] font-bold uppercase text-slate-600 bg-slate-100 p-2 text-center">Methods</h3>
+                    <div class="grid grid-cols-1 gap-px bg-slate-200 text-[10px]">
+                        <div class="bg-green-50 p-2 text-center">
+                            <div class="font-bold text-green-800 mb-1">Probability</div>
+                            Simple, Stratified, Systematic, Multistage
+                        </div>
+                        <div class="bg-red-50 p-2 text-center">
+                            <div class="font-bold text-red-800 mb-1">Non-Prob</div>
+                            Convenience, Quota, Snowball, Judgment
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col justify-center">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-sm">14</span> CLT
+                </h2>
+                <div class="text-center flex flex-col items-center mt-2">
+                    <div class="text-[10px] font-semibold mb-1 uppercase text-slate-500 tracking-wider">Any Population</div>
+                    <svg viewBox="0 0 100 30" class="w-16 h-6 mb-1">
+                        <path d="M 5 25 Q 15 5 25 25 T 45 10 T 65 25 T 85 5 T 95 25" fill="none" stroke="#64748b" stroke-width="2"/>
+                    </svg>
+                    <div class="text-slate-400 text-xs">↓ $n \ge 30$</div>
+                    <svg viewBox="0 0 100 30" class="w-16 h-6 mt-1">
+                        <path d="M 5 25 C 25 25, 35 5, 50 5 C 65 5, 75 25, 95 25" fill="rgba(249, 115, 22, 0.2)" stroke="#f97316" stroke-width="2"/>
+                    </svg>
+                    <div class="text-[10px] font-bold text-orange-700 mt-2 uppercase tracking-wider">Normal Dist</div>
+                    
+                    <div class="mt-3 bg-orange-50 border border-orange-200 w-full p-2 rounded-lg text-sm font-semibold">
+                        $$\mu_{\bar{x}} = \mu$$
+                        $$\sigma_{\bar{x}} = \frac{\sigma}{\sqrt{n}}$$
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-sm">15</span> Conf. Int.
+                </h2>
+                <div class="bg-orange-50 p-3 rounded-xl border border-orange-200 flex flex-col items-center justify-center flex-grow mb-3">
+                    <div class="bg-white px-2 py-1 rounded shadow-sm w-full text-center text-xs font-bold border border-orange-100">
+                        $$\bar{x} \pm Z \left( \frac{\sigma}{\sqrt{n}} \right)$$
+                    </div>
+                    <p class="text-[9px] text-orange-600 mt-2 text-center leading-tight uppercase font-bold tracking-wide">Use t-dist if n &lt; 30 & $\sigma$ unknown</p>
+                </div>
+                
+                <table class="w-full text-center text-xs border-collapse border border-slate-200">
+                    <tr class="bg-slate-100 text-slate-600 font-bold"><td class="p-1 border">Level</td><td class="p-1 border">Z</td></tr>
+                    <tr><td class="p-1 border">90%</td><td class="p-1 border font-mono">1.645</td></tr>
+                    <tr class="bg-orange-50"><td class="p-1 border font-bold text-orange-700">95%</td><td class="p-1 border font-mono font-bold text-orange-700">1.96</td></tr>
+                    <tr><td class="p-1 border">99%</td><td class="p-1 border font-mono">2.576</td></tr>
+                </table>
+            </section>
+            
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-sm">16</span> Hypo Test
+                </h2>
+                <div class="flex flex-col items-center gap-1 mt-2 text-xs font-semibold h-full justify-center">
+                    <div class="bg-slate-100 px-3 py-1 border border-slate-300 rounded text-slate-700 w-full text-center">
+                        <span class="font-bold text-indigo-700">H₀</span> : Null Hypothesis
+                    </div>
+                    <div class="bg-slate-100 px-3 py-1 border border-slate-300 rounded text-slate-700 w-full text-center mb-1">
+                        <span class="font-bold text-indigo-700">H₁</span> : Alternative Hyp
+                    </div>
+                    <div class="text-slate-400 text-lg leading-none">↓</div>
+                    <div class="bg-indigo-50 px-3 py-1 border border-indigo-200 rounded text-indigo-800 w-full text-center">
+                        Calculate Test Stat
+                    </div>
+                    <div class="text-slate-400 text-lg leading-none">↓</div>
+                    <div class="bg-indigo-50 px-3 py-1 border border-indigo-200 rounded text-indigo-800 w-full text-center">
+                        Find p-value
+                    </div>
+                    <div class="text-slate-400 text-lg leading-none">↓</div>
+                    <div class="bg-indigo-600 text-white px-3 py-2 rounded shadow-sm w-full text-center font-bold">
+                        Reject / Fail to Reject
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 🚨 EXAM TRAPS -->
+        <section class="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-6 shadow-md relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 text-8xl opacity-10">🚨</div>
+            <h2 class="text-xl font-black text-yellow-800 mb-4 flex items-center gap-2 uppercase tracking-widest">
+                🚨 Exam Traps — Do Not Forget!
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-8 text-sm font-semibold text-slate-800">
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">1.</span> 
+                    <span><b class="text-slate-900">Mean</b> is affected by outliers, <b class="text-slate-900">Median</b> is NOT.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">2.</span> 
+                    <span>Mutually Exclusive $\neq$ Independent. They are almost opposites.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">3.</span> 
+                    <span>Bayes theorem ALWAYS needs conditional probabilities to work.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">4.</span> 
+                    <span>For Poisson approximation to Binomial, use $\lambda = np$.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">5.</span> 
+                    <span>CLT guarantees a Normal sampling distribution only if $n \ge 30$.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-red-500 font-bold">6.</span> 
+                    <span>If Confidence Level goes UP, the Interval Width gets WIDER.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 17: 1 MINUTE EXAM CHEAT SHEET -->
+        <section class="bg-slate-900 rounded-2xl shadow-lg border border-slate-700 p-6 text-white mb-10">
+            <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 mb-6 flex items-center gap-2 border-b border-slate-700 pb-3">
+                ⏱️ 1 Minute Before Exam — Rapid Grid
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <!-- Stat Cards -->
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Pop Mean</span>
+                    <div class="text-sm">$$\mu = \frac{\sum x}{N}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Sample Mean</span>
+                    <div class="text-sm">$$\bar{x} = \frac{\sum x}{n}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Pop Variance</span>
+                    <div class="text-sm">$$\sigma^2 = \frac{\sum(x-\mu)^2}{N}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Sample Var</span>
+                    <div class="text-sm">$$s^2 = \frac{\sum(x-\bar{x})^2}{n-1}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Coeff of Var (CV)</span>
+                    <div class="text-sm">$$CV = \frac{\sigma}{\mu} \times 100$$</div>
+                </div>
+
+                <!-- Probability -->
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-purple-400 uppercase font-bold tracking-wider mb-1">Union (Mut Exc)</span>
+                    <div class="text-xs">$$P(A \cup B) = P(A) + P(B)$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-purple-400 uppercase font-bold tracking-wider mb-1">Intersection (Ind)</span>
+                    <div class="text-xs">$$P(A \cap B) = P(A)P(B)$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between col-span-2 md:col-span-1 lg:col-span-2">
+                    <span class="text-[10px] text-purple-400 uppercase font-bold tracking-wider mb-1">Total Probability</span>
+                    <div class="text-xs">$$P(B) = \sum P(B|A_i)P(A_i)$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-purple-400 uppercase font-bold tracking-wider mb-1">Complement</span>
+                    <div class="text-xs">$$P(A') = 1 - P(A)$$</div>
+                </div>
+
+                <!-- Distributions -->
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-cyan-400 uppercase font-bold tracking-wider mb-1">Expected Val E(X)</span>
+                    <div class="text-xs">$$\sum x \cdot P(x)$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-cyan-400 uppercase font-bold tracking-wider mb-1">Var(X)</span>
+                    <div class="text-[10px]">$$E(X^2) - [E(X)]^2$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-cyan-400 uppercase font-bold tracking-wider mb-1">Binomial Mean</span>
+                    <div class="text-sm">$$\mu = np$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-cyan-400 uppercase font-bold tracking-wider mb-1">Poisson Prob</span>
+                    <div class="text-xs">$$P(x) = \frac{e^{-\lambda}\lambda^x}{x!}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-cyan-400 uppercase font-bold tracking-wider mb-1">Standard Normal Z</span>
+                    <div class="text-sm">$$Z = \frac{x-\mu}{\sigma}$$</div>
+                </div>
+
+                <!-- Inference -->
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-orange-400 uppercase font-bold tracking-wider mb-1">Std Error (Mean)</span>
+                    <div class="text-sm">$$SE = \frac{\sigma}{\sqrt{n}}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-orange-400 uppercase font-bold tracking-wider mb-1">Margin of Error (E)</span>
+                    <div class="text-xs">$$E = Z \cdot \frac{\sigma}{\sqrt{n}}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-orange-400 uppercase font-bold tracking-wider mb-1">Sample Size (n)</span>
+                    <div class="text-xs">$$n = \left(\frac{Z\sigma}{E}\right)^2$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-orange-400 uppercase font-bold tracking-wider mb-1">CI Proportion</span>
+                    <div class="text-[10px]">$$\hat{p} \pm Z\sqrt{\frac{\hat{p}\hat{q}}{n}}$$</div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-lg flex flex-col justify-between">
+                    <span class="text-[10px] text-orange-400 uppercase font-bold tracking-wider mb-1">Test Stat Z</span>
+                    <div class="text-xs">$$Z = \frac{\bar{x} - \mu_0}{\sigma / \sqrt{n}}$$</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center text-slate-400 text-sm pb-8">
+        Designed for maximum impact Mid-Sem Revision. Good luck! 🚀
+    </footer>
+
+</body>
+</html>

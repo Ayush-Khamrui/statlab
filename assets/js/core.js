@@ -4,6 +4,19 @@
 (function () {
   'use strict';
 
+  // ---------- Product config (edit these for your store) ----------
+  // Paste your Lemon Squeezy checkout link below. Until then the buy buttons
+  // open a harmless placeholder so nothing breaks.
+  const CONFIG = {
+    brand: 'StatLab',
+    tagline: 'Statistics & Machine Learning, made to click',
+    checkoutUrl: '',                 // e.g. 'https://yourstore.lemonsqueezy.com/buy/xxxxxxxx'
+    price: '₹299',              // shown on the pricing card
+    priceNote: 'one-time · lifetime access',
+    contactEmail: 'you@example.com'  // shown in the footer
+  };
+  window.StatLabConfig = CONFIG; // override at runtime if you like
+
   // ---------- Course registry ----------
   const Course = {
     modules: [],
@@ -359,32 +372,102 @@
         '<h2>' + d.label + ' <span class="track-block-pct">' + to.done + '/' + to.total + ' · ' + to.pct + '%</span></h2>' +
         '<div class="module-cards">' + mods.map(cardHtml).join('') + '</div></div>';
     }).join('');
+    const startHash = '#/' + Course.modules[0].id + '/' + Course.modules[0].allSections[0].id;
+    const ctaLabel = o.pct > 0 ? 'Continue where you left off' : 'Start the first lesson';
+
+    const valueCards = [
+      ['Built to be understood', 'Every idea starts with a plain-language picture before any formula appears. The maths is there in full — but it follows the intuition instead of replacing it.'],
+      ['You learn by poking at it', countViz() + ' interactive visualisations let you drag a slider and watch a distribution, a regression line, or a decision boundary respond in real time.'],
+      ['Practice that explains itself', countQuiz() + ' practice questions, each with a worked solution that tells you not just the answer but why the tempting wrong one is wrong.'],
+      ['Yours, online or off', 'Install it like an app. Once loaded it works on a plane or a patchy train connection, and your progress is saved on your own device.']
+    ].map(([t, b]) => '<div class="value-card"><h3>' + t + '</h3><p>' + b + '</p></div>').join('');
+
+    const faqs = [
+      ['Do I need any background?', 'Comfort with school-level algebra is enough. The statistics track starts from describing data; the machine-learning track builds on it. You can take them in order or jump to a topic with the search bar.'],
+      ['Does it really work offline?', 'Yes. It is a Progressive Web App — add it to your home screen or desktop and the lessons, visualisations and quizzes keep working without a connection.'],
+      ['What do I get for the price?', 'Every lesson across both tracks, all interactive demos and quizzes, progress tracking, and any new material added later. One payment, no recurring charge.'],
+      ['Can I get a refund?', 'Yes — if it is not for you, reply to your receipt within 7 days and you will be refunded, no questions asked.'],
+      ['Who made this?', 'A working AI/ML postgraduate student, built from the notes I wished I had while studying. See the note at the bottom of this page.']
+    ].map(([q, a]) => '<details class="faq-item"><summary>' + q + '</summary><p>' + a + '</p></details>').join('');
+
     const html =
       '<section class="hero">' +
-      '<h1>Statistical Methods,<br><span class="grad-text">made intuitive & interactive</span></h1>' +
-      '<p class="lead">Your personal companion for the whole subject — narrative notes, animated intuitions, live graphs you can poke, Python you can run, and interview angles for your AI/ML journey.</p>' +
+      '<div class="hero-eyebrow">Statistics &amp; Machine Learning · self-paced</div>' +
+      '<h1>Finally understand the<br><span class="grad-text">maths behind machine learning</span></h1>' +
+      '<p class="lead">Clear, intuition-first lessons that take you from describing data to building and evaluating models — with visualisations you can play with and quizzes that explain every answer. No fluff, no prerequisites beyond basic algebra.</p>' +
       '<div class="hero-cta">' +
-      '<button class="btn-primary" data-go="#/' + Course.modules[0].id + '/' + Course.modules[0].allSections[0].id + '">' + (o.pct > 0 ? 'Continue learning →' : 'Start Module 1 →') + '</button>' +
-      '<button class="btn-ghost" id="home-shuffle">🎲 Surprise me</button>' +
+      '<button class="btn-primary" data-scroll="pricing">Get full access · ' + CONFIG.price + '</button>' +
+      '<button class="btn-ghost" data-go="' + startHash + '">' + ctaLabel + '</button>' +
       '</div>' +
+      '<div class="hero-trust">One-time payment · works offline · 7-day refund</div>' +
       '<div class="stat-strip">' +
       '<div class="s"><b>' + Course.modules.length + '</b><span>MODULES</span></div>' +
-      '<div class="s"><b>' + o.total + '</b><span>SECTIONS</span></div>' +
-      '<div class="s"><b>' + countViz() + '</b><span>LIVE DEMOS</span></div>' +
-      '<div class="s"><b>' + countQuiz() + '</b><span>QUIZ QUESTIONS</span></div>' +
+      '<div class="s"><b>' + o.total + '</b><span>LESSONS</span></div>' +
+      '<div class="s"><b>' + countViz() + '</b><span>INTERACTIVE DEMOS</span></div>' +
+      '<div class="s"><b>' + countQuiz() + '</b><span>PRACTICE QUESTIONS</span></div>' +
       '</div>' +
       '</section>' +
-      '<div class="callout aiml" data-icon="🧭"><div class="callout-title">How to use this</div>' +
-      '<p>Work module by module. Each section ends with a <b>“mark complete”</b> button that fills your progress rings. Every concept carries three lenses: <b style="color:var(--accent-2)">Intuition</b> (the mental picture), <b style="color:var(--gold)">Interview</b> (how it shows up for a Tech Lead), and <b style="color:var(--red)">Pitfall</b> (what trips people up). Press <kbd>/</kbd> anytime to jump to any topic.</p></div>' +
-      trackBlocks;
+
+      '<section class="landing-block">' +
+      '<div class="block-head"><h2>Why people stick with it</h2>' +
+      '<p class="block-sub">Most resources are either a wall of formulas or a pile of analogies with no rigour. This is built to be both correct and genuinely clear.</p></div>' +
+      '<div class="value-grid">' + valueCards + '</div>' +
+      '</section>' +
+
+      '<section class="landing-block" id="syllabus">' +
+      '<div class="block-head"><h2>What\'s inside</h2>' +
+      '<p class="block-sub">Two tracks you can take together or on their own. Browse any outline below before you decide.</p></div>' +
+      trackBlocks +
+      '</section>' +
+
+      '<section class="landing-block" id="pricing">' +
+      '<div class="block-head"><h2>One price, everything included</h2></div>' +
+      '<div class="price-card">' +
+      '<div class="price-tag">' + CONFIG.price + '<span>' + CONFIG.priceNote + '</span></div>' +
+      '<ul class="price-list">' +
+      '<li>All ' + o.total + ' lessons across both tracks</li>' +
+      '<li>' + countViz() + ' interactive visualisations</li>' +
+      '<li>' + countQuiz() + ' practice questions with worked solutions</li>' +
+      '<li>Works offline · progress saved on your device</li>' +
+      '<li>Free updates as new material is added</li>' +
+      '<li>7-day no-questions refund</li>' +
+      '</ul>' +
+      '<a class="btn-primary price-cta" id="buy-btn" href="' + (CONFIG.checkoutUrl || '#/home') + '"' + (CONFIG.checkoutUrl ? ' target="_blank" rel="noopener"' : '') + '>Get full access</a>' +
+      (CONFIG.checkoutUrl ? '' : '<p class="price-note-muted">Checkout link not set yet — add your store URL in the config.</p>') +
+      '</div>' +
+      '</section>' +
+
+      '<section class="landing-block" id="faq">' +
+      '<div class="block-head"><h2>Questions, answered</h2></div>' +
+      '<div class="faq-list">' + faqs + '</div>' +
+      '</section>' +
+
+      '<section class="landing-block about-block">' +
+      '<div class="about-card">' +
+      '<h2>A note from the maker</h2>' +
+      '<p>I built this while doing my own master\'s in AI and machine learning. The explanations that finally made things click for me were never in one place — they were scattered across lectures, textbooks, and half-remembered office hours. So I wrote them down, added the diagrams I kept drawing for myself, and turned them into something you can actually interact with.</p>' +
+      '<p>If it saves you the frustration I went through, it has done its job. Found a mistake or want a topic covered? Email me at <a href="mailto:' + CONFIG.contactEmail + '">' + CONFIG.contactEmail + '</a> — I read everything.</p>' +
+      '</div>' +
+      '</section>' +
+
+      '<footer class="site-footer">' +
+      '<div>' + CONFIG.brand + ' · ' + CONFIG.tagline + '</div>' +
+      '<div class="footer-links">' +
+      '<a data-scroll="syllabus" href="#/home">Syllabus</a>' +
+      '<a data-scroll="pricing" href="#/home">Pricing</a>' +
+      '<a data-scroll="faq" href="#/home">FAQ</a>' +
+      '<a href="mailto:' + CONFIG.contactEmail + '">Contact</a>' +
+      '</div>' +
+      '<div class="footer-fine">© ' + new Date().getFullYear() + ' ' + CONFIG.brand + '. Tip: press <kbd>/</kbd> anywhere to jump to a topic.</div>' +
+      '</footer>';
+
     const wrap = setView(html);
-    $$('[data-go]', wrap).forEach(b => b.addEventListener('click', () => location.hash = b.dataset.go));
-    const sh = $('#home-shuffle', wrap);
-    if (sh) sh.addEventListener('click', () => {
-      const m = Course.modules[Math.floor(Math.random() * Course.modules.length)];
-      const s = m.sections[Math.floor(Math.random() * m.sections.length)];
-      location.hash = '#/' + m.id + '/' + s.id;
-    });
+    $$('[data-go]', wrap).forEach(b => b.addEventListener('click', e => { e.preventDefault(); location.hash = b.dataset.go; }));
+    $$('[data-scroll]', wrap).forEach(b => b.addEventListener('click', e => {
+      e.preventDefault();
+      const t = $('#' + b.dataset.scroll, wrap);
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
   }
   function countViz() { let n = 0; Course.modules.forEach(m => m.allSections.forEach(s => { if (s.html) n += (s.html.match(/data-viz=/g) || []).length; })); return n; }
   function countQuiz() { let n = 0; Course.modules.forEach(m => n += (m.quiz ? m.quiz.length : 0)); return n; }

@@ -8,31 +8,31 @@ Course.addModule({
       id: 'sampling', title: 'Sampling & the Central Limit Theorem', icon: '🎯',
       search: 'population sample parameter statistic random stratified cluster systematic sampling bias sampling distribution standard error central limit theorem CLT law large numbers',
       html: `
-<p class="lead">We almost never see the whole population — we see a <strong>sample</strong> and must reason about the world from it. This is the heart of inferential statistics, and of every train/validation split in ML.</p>
+<p class="lead">We almost never see the whole population; we see a <strong>sample</strong> and must reason about the world from it. This is the heart of inferential statistics, and of every train/validation split in ML.</p>
 
-<div class="callout definition" data-icon="📐"><div class="callout-title">Parameter vs statistic</div><p>A <b>parameter</b> describes the population (true mean $\\mu$, true proportion $p$) — usually unknown. A <b>statistic</b> is computed from the sample ($\\bar{x}$, $\\hat{p}$) and <em>estimates</em> the parameter. Greek = truth, Latin = estimate.</p></div>
+<div class="callout definition" data-icon="📐"><div class="callout-title">Parameter vs statistic</div><p>A <b>parameter</b> describes the population (true mean $\\mu$, true proportion $p$) and is usually unknown. A <b>statistic</b> is computed from the sample ($\\bar{x}$, $\\hat{p}$) and <em>estimates</em> the parameter. Greek = truth, Latin = estimate.</p></div>
 
 <div class="grid cols-2">
 <div class="card"><h4>Simple random</h4><p>Everyone equally likely. The gold standard; other methods approximate it.</p></div>
-<div class="card"><h4>Stratified</h4><p>Split into groups (strata), sample each. Guarantees representation — like stratified train/test splits.</p></div>
+<div class="card"><h4>Stratified</h4><p>Split into groups (strata), sample each. Guarantees representation, like stratified train/test splits.</p></div>
 <div class="card"><h4>Cluster</h4><p>Sample whole groups (e.g. random schools). Cheap but higher variance.</p></div>
 <div class="card"><h4>Systematic</h4><p>Every $k$-th item. Simple, but dangerous if the list has hidden periodicity.</p></div>
 </div>
 
-<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">Sampling bias — the silent killer</div><p>If <em>how</em> you sample correlates with what you measure, no amount of data fixes it. Survivorship bias, self-selection, and label leakage are the ML cousins. A representative sample beats a bigger biased one every time.</p></div>
+<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">Sampling bias: the silent killer</div><p>If <em>how</em> you sample correlates with what you measure, no amount of data fixes it. Survivorship bias, self-selection, and label leakage are the ML cousins. A representative sample beats a bigger biased one every time.</p></div>
 
 <h2>The sampling distribution & standard error</h2>
 <p>Different samples give different $\\bar{x}$'s. The distribution of $\\bar{x}$ across all possible samples is the <strong>sampling distribution</strong>, and its spread is the <strong>standard error</strong>:</p>
 <div class="formula"><span class="formula-label">Standard error of the mean</span>$$\\text{SE} = \\frac{\\sigma}{\\sqrt{n}}$$</div>
-<p>Quadruple the sample size to halve the error — diminishing returns that explain why "just collect more data" eventually stops helping much.</p>
+<p>Quadruple the sample size to halve the error: diminishing returns that explain why "just collect more data" eventually stops helping much.</p>
 
-<div class="callout theorem" data-icon="📜"><div class="callout-title">Central Limit Theorem (CLT)</div><p>For large $n$, the distribution of the sample mean $\\bar{X}$ is approximately <strong>Normal</strong> with mean $\\mu$ and SD $\\sigma/\\sqrt{n}$ — <em>regardless of the population's shape</em>. Sums and averages of many independent effects become bell-shaped.</p></div>
+<div class="callout theorem" data-icon="📜"><div class="callout-title">Central Limit Theorem (CLT)</div><p>For large $n$, the distribution of the sample mean $\\bar{X}$ is approximately <strong>Normal</strong> with mean $\\mu$ and SD $\\sigma/\\sqrt{n}$, <em>regardless of the population's shape</em>. Sums and averages of many independent effects become bell-shaped.</p></div>
 
 <div class="viz" data-viz="clt"></div>
 
 <div class="callout intuition" data-icon="🧠"><div class="callout-title">Why the CLT is the most important theorem in stats</div><p>It's the reason the Normal distribution is everywhere, and the reason we can put error bars on almost any average without knowing the population's true shape. It justifies z/t-tests, confidence intervals, and the standard error bars on every metric you report. Pick a wild population in the demo above and watch the bell emerge anyway.</p></div>
 
-<div class="callout aiml" data-icon="🤖"><div class="callout-title">AI/ML connection</div><p>The CLT is why your <strong>validation metric</strong> has a roughly Normal sampling distribution — so you can attach a standard error to accuracy/AUC and decide whether model A really beats model B. It also underlies <strong>bootstrapping</strong> (resampling to estimate uncertainty) and the noise model in mini-batch SGD (batch gradients ≈ true gradient + Normal noise shrinking like $1/\\sqrt{\\text{batch}}$).</p></div>
+<div class="callout aiml" data-icon="🤖"><div class="callout-title">Connection · uncertainty on metrics</div><p>The CLT is why your <strong>validation metric</strong> has a roughly Normal sampling distribution, so you can attach a standard error to accuracy/AUC and decide whether model A really beats model B. It also underlies <strong>bootstrapping</strong> (resampling to estimate uncertainty) and the noise model in mini-batch SGD (batch gradients ≈ true gradient + Normal noise shrinking like $1/\\sqrt{\\text{batch}}$).</p></div>
 
 <pre class="code" data-lang="python">import numpy as np
 rng = np.random.default_rng(0)
@@ -53,13 +53,13 @@ print("theory SE", pop.std()/np.sqrt(30), "  observed SE", np.std(means))
 <div class="formula"><span class="formula-label">CI for a mean (known σ, or large n)</span>$$\\bar{x} \\pm z_{\\alpha/2}\\cdot\\frac{\\sigma}{\\sqrt{n}}$$</div>
 <p>For 95%, $z_{\\alpha/2}=1.96$. The $\\pm$ part is the <strong>margin of error</strong>. With unknown σ and small $n$, swap the $z$ for a $t$-value (fatter tails to account for estimating σ).</p>
 
-<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">What "95% confidence" does NOT mean</div><p>It does <em>not</em> mean "95% probability the true mean is in <em>this</em> interval" — the true mean is fixed, not random. It means: <strong>if you repeated the whole procedure many times, ~95% of the intervals would capture the truth.</strong> Confidence is a property of the <em>method</em>, not of one interval.</p></div>
+<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">What "95% confidence" does NOT mean</div><p>It does <em>not</em> mean "95% probability the true mean is in <em>this</em> interval," because the true mean is fixed, not random. It means: <strong>if you repeated the whole procedure many times, ~95% of the intervals would capture the truth.</strong> Confidence is a property of the <em>method</em>, not of one interval.</p></div>
 
 <div class="viz" data-viz="confidenceInterval"></div>
 
-<div class="callout interview" data-icon="💼"><div class="callout-title">Interview angle</div><p>"Wider or narrower CI if I…" — increase $n$ → <strong>narrower</strong> (more info); increase confidence 95%→99% → <strong>wider</strong> (must cover more to be surer); increase variability σ → <strong>wider</strong>. The trade-off between confidence level and precision is the whole game. Bonus: mention the <strong>bootstrap</strong> as a model-free way to get CIs when formulas don't exist.</p></div>
+<div class="callout interview" data-icon="💼"><div class="callout-title">Interview angle</div><p>"Wider or narrower CI if I…" Increase $n$ → <strong>narrower</strong> (more info); increase confidence 95%→99% → <strong>wider</strong> (must cover more to be surer); increase variability σ → <strong>wider</strong>. The trade-off between confidence level and precision is the whole game. Bonus: mention the <strong>bootstrap</strong> as a model-free way to get CIs when formulas don't exist.</p></div>
 
-<div class="callout aiml" data-icon="🤖"><div class="callout-title">AI/ML connection</div><p>Report model metrics with CIs, not bare point estimates: "AUC 0.81 ± 0.03." It stops teams from chasing noise. The bootstrap (resample your test set with replacement, recompute the metric many times, take the 2.5/97.5 percentiles) is the practical workhorse for this in ML.</p></div>
+<div class="callout aiml" data-icon="🤖"><div class="callout-title">Connection · CIs on metrics</div><p>Report model metrics with CIs, not bare point estimates: "AUC 0.81 ± 0.03." It stops teams from chasing noise. The bootstrap (resample your test set with replacement, recompute the metric many times, take the 2.5/97.5 percentiles) is the practical workhorse for this in ML.</p></div>
 
 <pre class="code" data-lang="python">import numpy as np
 from scipy import stats
@@ -77,19 +77,19 @@ print("bootstrap 95% CI for median:", np.percentile(boot, [2.5, 97.5]))</pre>
       id: 'hypothesis', title: 'Hypothesis testing, p-values & errors', icon: '⚔️',
       search: 'null alternative hypothesis test statistic p-value significance level alpha z-test t-test chi-square anova type I type II error power one two tailed multiple testing',
       html: `
-<p class="lead">A hypothesis is a claim ("this team member is excellent"; "version B converts better"). To <em>validate</em> it you need data — and a disciplined way to decide whether the data is surprising enough to act on.</p>
+<p class="lead">A hypothesis is a claim ("this team member is excellent"; "version B converts better"). To <em>validate</em> it you need data, and a disciplined way to decide whether the data is surprising enough to act on.</p>
 
 <div class="callout definition" data-icon="📐"><div class="callout-title">The setup</div>
 <ul>
-<li><b>Null $H_0$</b>: the boring default — "no effect," "no difference." We assume it true until the data forces otherwise.</li>
-<li><b>Alternative $H_1$</b>: what we suspect — "there is an effect."</li>
+<li><b>Null $H_0$</b>: the boring default, "no effect" or "no difference." We assume it true until the data forces otherwise.</li>
+<li><b>Alternative $H_1$</b>: what we suspect, that "there is an effect."</li>
 <li><b>Test statistic</b>: how far the data sits from $H_0$, in standard-error units (e.g. $z=\\frac{\\bar{x}-\\mu_0}{\\sigma/\\sqrt{n}}$).</li>
 <li><b>p-value</b>: assuming $H_0$ is true, the probability of data <em>at least this extreme</em>.</li>
 </ul></div>
 
-<div class="callout intuition" data-icon="🧠"><div class="callout-title">Intuition · proof by contradiction with chance</div><p>Assume the null. Compute how weird your data would be under that assumption (the p-value). If it's weird enough (p &lt; α, usually 0.05), you <strong>reject the null</strong> — the assumption strained credulity. It's "innocent until proven guilty": we never <em>prove</em> $H_0$, we just fail to reject it.</p></div>
+<div class="callout intuition" data-icon="🧠"><div class="callout-title">Intuition · proof by contradiction with chance</div><p>Assume the null. Compute how weird your data would be under that assumption (the p-value). If it's weird enough (p &lt; α, usually 0.05), you <strong>reject the null</strong>, since the assumption strained credulity. It is "innocent until proven guilty": we never <em>prove</em> $H_0$, we just fail to reject it.</p></div>
 
-<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">What a p-value is NOT</div><p>p is <em>not</em> P(null is true), and "p &gt; 0.05" does <em>not</em> prove there's no effect. p &lt; 0.05 isn't "95% sure it's real." A p-value answers only: "<strong>how surprising is this data if the null holds?</strong>" Small effects become "significant" with huge $n$ — always report the <strong>effect size</strong> too.</p></div>
+<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">What a p-value is NOT</div><p>p is <em>not</em> P(null is true), and "p &gt; 0.05" does <em>not</em> prove there's no effect. p &lt; 0.05 isn't "95% sure it's real." A p-value answers only: "<strong>how surprising is this data if the null holds?</strong>" Small effects become "significant" with huge $n$, so always report the <strong>effect size</strong> too.</p></div>
 
 <h3>Picking the test</h3>
 <div class="tbl-wrap"><table class="data">
@@ -103,17 +103,17 @@ print("bootstrap 95% CI for median:", np.percentile(boot, [2.5, 97.5]))</pre>
 <h2>Two ways to be wrong: Type I & Type II</h2>
 <div class="tbl-wrap"><table class="data">
 <tr><th></th><th>$H_0$ true</th><th>$H_0$ false</th></tr>
-<tr><td><b>Reject $H_0$</b></td><td>Type I error (α) — false alarm</td><td>✓ correct (power = 1−β)</td></tr>
-<tr><td><b>Fail to reject</b></td><td>✓ correct</td><td>Type II error (β) — missed effect</td></tr>
+<tr><td><b>Reject $H_0$</b></td><td>Type I error (α): false alarm</td><td>✓ correct (power = 1−β)</td></tr>
+<tr><td><b>Fail to reject</b></td><td>✓ correct</td><td>Type II error (β): missed effect</td></tr>
 </table></div>
 
 <div class="viz" data-viz="errorsPower"></div>
 
-<div class="callout interview" data-icon="💼"><div class="callout-title">Interview angle · the α/β/power triangle</div><p>Lowering α (fewer false alarms) <em>raises</em> β (more misses) for fixed $n$ — you can't shrink both without more data or a bigger effect. <strong>Power</strong> = 1−β = probability of detecting a real effect; you raise it with larger $n$, larger effect size, or lower noise. A spam filter tunes α vs β as precision vs recall; medical screening favours high power (don't miss disease) at the cost of more false alarms.</p></div>
+<div class="callout interview" data-icon="💼"><div class="callout-title">Interview angle · the α/β/power triangle</div><p>Lowering α (fewer false alarms) <em>raises</em> β (more misses) for fixed $n$, so you can't shrink both without more data or a bigger effect. <strong>Power</strong> = 1−β = probability of detecting a real effect; you raise it with larger $n$, larger effect size, or lower noise. A spam filter tunes α vs β as precision vs recall; medical screening favours high power (don't miss disease) at the cost of more false alarms.</p></div>
 
-<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">Multiple testing</div><p>Run 20 tests at α=0.05 and you expect ~1 false positive by chance alone — this is p-hacking. Correct with <strong>Bonferroni</strong> (divide α by the number of tests) or <strong>FDR / Benjamini–Hochberg</strong>. Hugely relevant when screening many features or running many A/B variants.</p></div>
+<div class="callout pitfall" data-icon="⚠️"><div class="callout-title">Multiple testing</div><p>Run 20 tests at α=0.05 and you expect ~1 false positive by chance alone, which is the seed of p-hacking. Correct with <strong>Bonferroni</strong> (divide α by the number of tests) or <strong>FDR / Benjamini–Hochberg</strong>. Hugely relevant when screening many features or running many A/B variants.</p></div>
 
-<div class="callout aiml" data-icon="🤖"><div class="callout-title">AI/ML connection · A/B testing & model comparison</div><p>Hypothesis testing is how you decide a new model/feature is a real improvement, not noise: $H_0$ = "no lift." Type I = shipping a useless change; Type II = killing a good one. Power analysis tells you how much traffic an A/B test needs. The precision/recall and ROC trade-offs you tune in classifiers are the same α/β dial in disguise.</p></div>
+<div class="callout aiml" data-icon="🤖"><div class="callout-title">Connection · A/B testing &amp; model comparison</div><p>Hypothesis testing is how you decide a new model/feature is a real improvement, not noise: $H_0$ = "no lift." Type I = shipping a useless change; Type II = killing a good one. Power analysis tells you how much traffic an A/B test needs. The precision/recall and ROC trade-offs you tune in classifiers are the same α/β dial in disguise.</p></div>
 
 <pre class="code" data-lang="python">from scipy import stats
 import numpy as np
@@ -136,7 +136,7 @@ print("per-test threshold:", alpha_corrected)   # 0.0025</pre>
     }
   ],
   cheatsheet: `
-<p class="lead">Module 4 recall — from sample to claim.</p>
+<p class="lead">Module 4 recall: from sample to claim.</p>
 <div class="grid cols-2">
 <div class="card"><h4>SE & CLT</h4><p>$\\text{SE}=\\sigma/\\sqrt{n}$. Sample mean ≈ Normal$(\\mu,\\sigma/\\sqrt{n})$ for large $n$, any population shape.</p></div>
 <div class="card"><h4>Confidence interval</h4><p>$\\bar{x}\\pm z_{\\alpha/2}\\,\\sigma/\\sqrt{n}$ (z=1.96 for 95%). Property of the <i>method</i>: ~95% of such intervals cover μ.</p></div>
@@ -159,12 +159,12 @@ print("per-test threshold:", alpha_corrected)   # 0.0025</pre>
 `,
   quiz: [
     { q: 'The Central Limit Theorem guarantees that, for large n, which is approximately Normal?', opts: ['The population itself', 'The individual data values', 'The sampling distribution of the sample mean', 'The variance'], answer: 2, explain: 'The CLT is about the <b>sample mean’s</b> distribution: it tends to Normal(μ, σ/√n) regardless of the population shape. The raw population can be any shape at all.' },
-    { q: 'You quadruple your sample size. The standard error of the mean…', opts: ['Quadruples', 'Doubles', 'Halves', 'Is unchanged'], answer: 2, explain: 'SE = σ/√n. Multiplying n by 4 multiplies √n by 2, so SE is <b>halved</b>. Precision improves only with the square root of n — the law of diminishing returns on "more data."' },
-    { q: 'A 95% confidence interval for a mean is [40, 46]. Which statement is correct?', opts: ['There is a 95% probability μ is between 40 and 46', '95% of the data lies between 40 and 46', 'If we repeated the procedure, ~95% of such intervals would contain the true μ', 'The sample mean has a 95% chance of being 43'], answer: 2, explain: 'Confidence is a property of the <b>procedure</b>: ~95% of intervals built this way capture the fixed (non-random) μ. Any single interval either contains μ or not — there’s no probability attached to it after the fact.' },
-    { q: 'A p-value of 0.03 means:', opts: ['There is a 3% chance the null is true', 'There is a 97% chance the effect is real', 'If the null were true, data this extreme would occur 3% of the time', 'The effect size is 3%'], answer: 2, explain: 'The p-value is P(data at least this extreme | H₀ true) = 0.03. It says nothing directly about P(H₀ true) or the effect size — common misreadings that interviewers probe.' },
+    { q: 'You quadruple your sample size. The standard error of the mean…', opts: ['Quadruples', 'Doubles', 'Halves', 'Is unchanged'], answer: 2, explain: 'SE = σ/√n. Multiplying n by 4 multiplies √n by 2, so SE is <b>halved</b>. Precision improves only with the square root of n, the law of diminishing returns on "more data."' },
+    { q: 'A 95% confidence interval for a mean is [40, 46]. Which statement is correct?', opts: ['There is a 95% probability μ is between 40 and 46', '95% of the data lies between 40 and 46', 'If we repeated the procedure, ~95% of such intervals would contain the true μ', 'The sample mean has a 95% chance of being 43'], answer: 2, explain: 'Confidence is a property of the <b>procedure</b>: ~95% of intervals built this way capture the fixed (non-random) μ. Any single interval either contains μ or not; there’s no probability attached to it after the fact.' },
+    { q: 'A p-value of 0.03 means:', opts: ['There is a 3% chance the null is true', 'There is a 97% chance the effect is real', 'If the null were true, data this extreme would occur 3% of the time', 'The effect size is 3%'], answer: 2, explain: 'The p-value is P(data at least this extreme | H₀ true) = 0.03. It says nothing directly about P(H₀ true) or the effect size, the common misreadings that interviewers probe.' },
     { q: 'For fixed sample size, lowering α (e.g. 0.05 → 0.01) does what to Type II error β?', opts: ['Lowers β too', 'Raises β (and lowers power)', 'No effect on β', 'Eliminates β'], answer: 1, explain: 'There’s a trade-off: making it harder to falsely reject (lower α) makes it easier to miss a real effect (higher β, lower power). To shrink both you need a larger n or a bigger true effect.' },
     { q: 'You want to compare conversion across four landing-page designs. Best test?', opts: ['Four separate t-tests', 'A single ANOVA (F-test)', 'A z-test', 'A correlation'], answer: 1, explain: 'Comparing 3+ group means → <b>ANOVA</b>. Running many pairwise t-tests inflates the Type I error (multiple testing). ANOVA tests "are any means different?" with one controlled test, then you do corrected post-hoc comparisons.' },
-    { q: 'In an A/B test, "shipping a change that actually does nothing" corresponds to which error?', opts: ['Type I (false positive)', 'Type II (false negative)', 'Sampling bias', 'Low power'], answer: 0, explain: 'H₀ = "no lift." Rejecting it when it’s true (shipping a useless change) is a <b>Type I error</b>. Killing a genuinely good change is Type II. Framing A/B outcomes in these terms is a Tech-Lead-level answer.' },
+    { q: 'In an A/B test, "shipping a change that actually does nothing" corresponds to which error?', opts: ['Type I (false positive)', 'Type II (false negative)', 'Sampling bias', 'Low power'], answer: 0, explain: 'H₀ = "no lift." Rejecting it when it’s true (shipping a useless change) is a <b>Type I error</b>. Killing a genuinely good change is Type II. Framing A/B outcomes in these terms is a senior-level answer.' },
     { q: 'Why report a metric like "AUC 0.81 ± 0.03" instead of just "0.81"?', opts: ['It looks more professional', 'The ± is the uncertainty (e.g. bootstrap CI); it stops teams chasing noise', 'It makes the model better', 'It is required by scikit-learn'], answer: 1, explain: 'The interval communicates sampling uncertainty of the estimate. Without it, a 0.81 vs 0.80 "improvement" may be pure noise. Bootstrapping the test set is the standard way to get that ±.' }
   ]
 });
